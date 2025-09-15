@@ -1,0 +1,37 @@
+---
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.3.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-added-large-files
+          - id: pretty-format-json
+            args:
+                - --autofix
+            files: ^(?!package-lock\.json$).*\.json$
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 0.2.1
+      hooks:
+          - id: yamlfmt
+    - repo: https://github.com/crate-ci/typos
+      rev: v1.35.6
+      hooks:
+          - id: typos
+    - repo: https://github.com/astral-sh/uv-pre-commit
+      rev: 0.8.17
+      hooks:
+          - id: uv-lock
+          - id: uv-export
+    - repo: local
+      hooks:
+          - id: commintlint
+            name: lint commit message
+            stages: [commit-msg]
+            entry: npx commitlint --edit
+            language: system
+          - id: fmt
+            name: make fmt
+            entry: make fmt
+            language: system
