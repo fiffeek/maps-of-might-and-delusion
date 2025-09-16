@@ -3,3 +3,5 @@ stamp
 .venv
 bin
 node_modules
+cached_responses
+__pycache__
