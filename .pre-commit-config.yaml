@@ -48,3 +48,7 @@ repos:
             name: make fmt
             entry: make fmt
             language: system
+          - id: lint
+            name: make lint
+            entry: make lint
+            language: system
