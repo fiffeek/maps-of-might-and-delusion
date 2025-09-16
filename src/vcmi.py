@@ -36,6 +36,8 @@ class VCMI:
                 "DISPLAY_NUM": f"{self.display}",
                 "HOMM_DATA_PATH": data_mount,
                 "XAUTH_DIR": xauth_mount,
+                "SCREEN_W": "1600",
+                "SCREEN_H": "1080",
             },
             name=self.name,
             init=True,
@@ -78,9 +80,8 @@ class VCMI:
         """
         if self.container is None:
             raise RuntimeError("vcmi container has not been started")
-        # TODO fix
         for log in self.container.logs(stream=True, follow=True):
-            logger.debug(log)
+            logger.debug(str(log))
 
     def stop(self):
         if self.container:

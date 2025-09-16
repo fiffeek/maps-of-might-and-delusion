@@ -1,10 +1,17 @@
 import subprocess
 import time
 from typing import Optional
+from file import ROOT_DIR
 from logger import logger
 
+from models import MapSize
 from vcmi import VCMI
 import os
+from enum import Enum
+
+
+class ButtonType(str, Enum):
+    FILE_TOP_LEFT = "file"
 
 
 class GUIController:
@@ -38,6 +45,25 @@ class GUIController:
         # give some time to warm up
         time.sleep(10)
         self.vcmi.maximize()
+        self.locate_buttons()
+
+    def locate_buttons(self):
+        self.button_map = {
+            ButtonType.FILE_TOP_LEFT: self.locate_on_screen(ButtonType.FILE_TOP_LEFT)
+        }
+
+    def locate_screenshots_file(self, path: str) -> str:
+        return f"{ROOT_DIR}/src/locators/screenshots/{path}.png"
+
+    def locate_on_screen(self, button_type: ButtonType):
+        import pyautogui
+
+        logger.debug(f"Attempting to find: {self.locate_screenshots_file(button_type)}")
+        found = pyautogui.locateOnScreen(
+            image=self.locate_screenshots_file(button_type), confidence=0.5
+        )
+        logger.debug(f"Found {self.locate_screenshots_file(button_type)} at {found}")
+        return found
 
     def __enter__(self):
         self.vcmi.start()
@@ -46,5 +72,17 @@ class GUIController:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.vcmi.stop()
 
-    def new_map(self):
-        pass
+    def click(self, button_type: ButtonType):
+        import pyautogui
+
+        button_box = self.button_map[button_type]
+        if button_box is None:
+            raise RuntimeError(f"cant click {button_type}")
+        point = pyautogui.center(
+            (button_box.left, button_box.top, button_box.width, button_box.height)
+        )
+        pyautogui.click(point.x, point.y)
+
+    def new_map(self, size: MapSize):
+        self.click(ButtonType.FILE_TOP_LEFT)
+        self.screenshot()

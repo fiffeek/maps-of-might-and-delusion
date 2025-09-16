@@ -36,12 +36,24 @@ class AI:
 
     def get_initial_prompt(self, seed: int):
         map_size = MapSize.S
+        players: int = 4
         prompt = f"""
 Generate a HOMM3 map according to the output spec.
 Map size is: {map_size}, dimensions: {get_map_dimensions(map_size)}.
-Keep the output small for now since we are testing.
+Players count: {players}.
 Respect seeds, for different seeds give different maps.
-Generation seed: {seed}
+Generation seed: {seed}.
+
+The zones must occupy the entire map.
+Be creative with the zones, they can consist of multiple shapes.
+Make the zones as interesting in shape as possible, combine multiple smaller shapes to achieve best results.
+Each zone should consist at least 4 shapes.
+Everything left out will be water.
+Do not output overlapping shapes for zones.
+Cover the entire map with all the shapes.
+The combined shapes of the zones should look interesting to the player.
+Most zones should connect unless the map scenario says otherwise.
+Keep in mind fairness of the players, they need reasonable starting zones.
 """
         logger.debug(f"Prompt {prompt}")
         return prompt
