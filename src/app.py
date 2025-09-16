@@ -1,4 +1,3 @@
-import time
 import os
 
 from ai import AI
@@ -33,8 +32,8 @@ class Application:
         self.gui_controller = GUIController(self.virtual_display)
         self.map_generator = MapGenerator()
 
-    def generate_map(self):
-        map = self.ai.generate_map()
+    def generate_map(self, seed: int):
+        map = self.ai.generate_map(seed)
         with self.gui_controller as gui_controller:
             logger.debug(f"Display: {os.environ.get('DISPLAY')}")
             gui_controller.prepare()

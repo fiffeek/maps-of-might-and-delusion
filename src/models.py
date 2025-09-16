@@ -62,7 +62,7 @@ class Zone(BaseModel):
 
 
 class MapSpec(BaseModel):
-    pass
+    size: MapSize
 
 
 class GenerateMapResponse(BaseModel):

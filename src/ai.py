@@ -13,8 +13,8 @@ class AI:
         self.agent = Agent(self.model, output_type=GenerateMapResponse)
         self.cache = cache
 
-    def generate_map(self) -> GenerateMapResponse:
-        prompt = self.get_initial_prompt()
+    def generate_map(self, seed: int) -> GenerateMapResponse:
+        prompt = self.get_initial_prompt(seed)
         result = self.ask(prompt)
         logger.debug(f"Response: {result}")
         return result
@@ -34,12 +34,14 @@ class AI:
         logger.debug("Saved to cache")
         return result
 
-    def get_initial_prompt(self):
+    def get_initial_prompt(self, seed: int):
         map_size = MapSize.S
         prompt = f"""
 Generate a HOMM3 map according to the output spec.
 Map size is: {map_size}, dimensions: {get_map_dimensions(map_size)}.
 Keep the output small for now since we are testing.
+Respect seeds, for different seeds give different maps.
+Generation seed: {seed}
 """
         logger.debug(f"Prompt {prompt}")
         return prompt

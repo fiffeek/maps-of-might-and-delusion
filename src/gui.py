@@ -45,3 +45,6 @@ class GUIController:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.vcmi.stop()
+
+    def new_map(self):
+        pass

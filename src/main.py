@@ -49,8 +49,13 @@ def main(ctx, debug: bool, homm_data_path: str, repository, tag, display, xauth_
     help="Path to save the LLM responses to.",
     default="$XDG_CACHE_HOME/aiomad/responses",
 )
+@click.option(
+    "--seed",
+    help="A seed for map generation",
+    default=1,
+)
 @click.pass_context
-def generate(ctx, cache: str):
+def generate(ctx, cache: str, seed: int):
     homm_data_path = ctx.obj["homm_data_path"]
     repository = ctx.obj["repository"]
     display = ctx.obj["display"]
@@ -64,7 +69,7 @@ def generate(ctx, cache: str):
         display=display,
         xauth_dir=xauth_dir,
     )
-    app.generate_map()
+    app.generate_map(seed)
 
 
 @main.command()
