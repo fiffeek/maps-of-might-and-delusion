@@ -6,5 +6,5 @@ class MapGenerator:
     def __init__(self) -> None:
         pass
 
-    def generate(self, map: GenerateMapResponse, gui: GUIController):
-        gui.screenshot()
+    def generate(self, map: GenerateMapResponse, gui_controller: GUIController):
+        gui_controller.screenshot()

@@ -86,6 +86,21 @@ class VCMI:
         if self.container:
             self.container.stop()
 
+    def maximize(self):
+        command = f'DISPLAY=:{self.display} wmctrl -r "VCMI Map Editor" -b add,maximized_vert,maximized_horz'
+        self.run_command(command)
+
+    def run_command(self, command: str):
+        logger.debug(f"Running command: {command}")
+        if self.container is None:
+            raise RuntimeError("vcmi container has not been started")
+        result = self.container.exec_run(["/bin/sh", "-lc", command])
+        if result.exit_code != 0:
+            raise RuntimeError(
+                f"cant run the command in the container, out: {result.output}"
+            )
+        logger.debug(result.output)
+
     def __enter__(self):
         self.start()
         return self

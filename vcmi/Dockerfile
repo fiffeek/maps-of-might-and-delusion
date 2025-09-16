@@ -22,6 +22,9 @@ RUN apt-add-repository ppa:vcmi/ppa \
   && apt update \
   && apt install -y vcmi
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  x11-utils x11-xserver-utils xdotool wmctrl
+
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN useradd -ms /bin/bash app

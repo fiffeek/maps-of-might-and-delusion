@@ -34,6 +34,11 @@ class GUIController:
         logger.info(f"Screenshot saved as {filename}")
         return filename
 
+    def prepare(self):
+        # give some time to warm up
+        time.sleep(10)
+        self.vcmi.maximize()
+
     def __enter__(self):
         self.vcmi.start()
         return self

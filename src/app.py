@@ -35,8 +35,8 @@ class Application:
 
     def generate_map(self):
         map = self.ai.generate_map()
-        with self.gui_controller:
-            logger.debug("Generating the map")
+        with self.gui_controller as gui_controller:
             logger.debug(f"Display: {os.environ.get('DISPLAY')}")
-            time.sleep(20)
-            self.map_generator.generate(map, self.gui_controller)
+            gui_controller.prepare()
+            logger.debug("Generating the map")
+            self.map_generator.generate(map, gui_controller)
