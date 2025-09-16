@@ -11,6 +11,19 @@ repos:
             args:
                 - --autofix
             files: ^(?!package-lock\.json$).*\.json$
+    - repo: https://github.com/shellcheck-py/shellcheck-py
+      rev: v0.10.0.1
+      hooks:
+          - id: shellcheck
+            entry: shellcheck --shell=bash
+    - repo: https://github.com/reteps/dockerfmt
+      rev: v0.3.7
+      hooks:
+          - id: dockerfmt
+            args:
+                - --indent=2
+                - --write
+                - --newline
     - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
       rev: 0.2.1
       hooks:

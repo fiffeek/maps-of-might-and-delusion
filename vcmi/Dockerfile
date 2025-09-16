@@ -15,12 +15,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libxrandr2 libxrender1 libxi6 \
   innoextract
 
-RUN apt-get update && \
-  apt-get install -y software-properties-common
+RUN apt-get update \
+  && apt-get install -y software-properties-common
 
-RUN apt-add-repository ppa:vcmi/ppa && \
-  apt update && \
-  apt install -y vcmi
+RUN apt-add-repository ppa:vcmi/ppa \
+  && apt update \
+  && apt install -y vcmi
 
 RUN rm -rf /var/lib/apt/lists/*
 
