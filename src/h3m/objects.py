@@ -7,6 +7,8 @@ making it easier to work with map creation and modification.
 
 from enum import Enum
 
+from models import BuildingType, TownType
+
 
 class H3MTown(Enum):
     """Heroes III town types"""
@@ -23,6 +25,23 @@ class H3MTown(Enum):
     COVE = "Cove"  # Horn of the Abyss expansion
     FACTORY = "Factory"  # Horn of the Abyss expansion
     RANDOM = "Random Town"
+
+    @staticmethod
+    def from_model(model: TownType) -> "H3MTown":
+        mapping = {
+            TownType.CASTLE: H3MTown.CASTLE,
+            TownType.RAMPART: H3MTown.RAMPART,
+            TownType.TOWER: H3MTown.TOWER,
+            TownType.INFERNO: H3MTown.INFERNO,
+            TownType.NECROPOLIS: H3MTown.NECROPOLIS,
+            TownType.DUNGEON: H3MTown.DUNGEON,
+            TownType.STRONGHOLD: H3MTown.STRONGHOLD,
+            TownType.FORTRESS: H3MTown.FORTRESS,
+            TownType.RANDOM: H3MTown.RANDOM,
+        }
+        if model not in mapping:
+            raise ValueError(f"Unrecognized town type: {model}")
+        return mapping[model]
 
 
 class H3MCreature(Enum):
@@ -594,6 +613,34 @@ class H3MBuilding(Enum):
 
     # Events and text
     EVENT = "Event"
+
+    @staticmethod
+    def from_model(model: BuildingType) -> "H3MBuilding":
+        """Convert from models.BuildingType to H3MBuilding"""
+        if model == BuildingType.SAWMILL:
+            return H3MBuilding.SAWMILL
+        elif model == BuildingType.ORE_PIT:
+            return H3MBuilding.ORE_PIT
+        elif model == BuildingType.ALCHEMISTS_LAB:
+            return H3MBuilding.ALCHEMISTS_LAB
+        elif model == BuildingType.SULFUR_DUNE:
+            return H3MBuilding.SULFUR_DUNE
+        elif model == BuildingType.CRYSTAL_CAVERN:
+            return H3MBuilding.CRYSTAL_CAVERN
+        elif model == BuildingType.GEM_POND:
+            return H3MBuilding.GEM_POND
+        elif model == BuildingType.GOLD_MINE:
+            return H3MBuilding.GOLD_MINE
+        elif model == BuildingType.ABANDONED_MINE:
+            return H3MBuilding.ABANDONED_MINE
+        elif model == BuildingType.SUBTERRANEAN_GATE:
+            return H3MBuilding.SUBTERRANEAN_GATE
+        elif model == BuildingType.BOAT:
+            return H3MBuilding.BOAT
+        elif model == BuildingType.SHIPYARD:
+            return H3MBuilding.SHIPYARD
+        else:
+            raise ValueError(f"Unrecognized building type: {model}")
 
 
 class H3MHero(Enum):

@@ -1,2 +1,2 @@
 [files]
-extend-exclude = ["**/*.sh"]
+extend-exclude = ["**/*.sh", "src/h3m/lib.py"]

@@ -85,3 +85,8 @@ run/vcmi/container: build/vcmi/container
 
 run/cli/dev:
 	@$(UVX_BIN)
+
+build/h3m:
+	@$(MAKE) -C homm3tools/h3m/h3mtilespritegen/BUILD/gcc install
+	@$(MAKE) -C homm3tools/h3m/h3mlib/BUILD/gcc install
+	@cp homm3tools/OUTPUT/gcc/h3mlib.so dist/h3mlib.so

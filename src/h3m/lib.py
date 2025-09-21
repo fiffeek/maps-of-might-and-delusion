@@ -77,6 +77,7 @@ class H3MFormat(IntEnum):
 class H3MTerrain(IntEnum):
     """Terrain types"""
 
+    H3MLIB_TERRAIN_NATIVE = -1
     DIRT = 0
     SAND = 1
     GRASS = 2
@@ -86,6 +87,7 @@ class H3MTerrain(IntEnum):
     SUBTERRANEAN = 6
     LAVA = 7
     WATER = 8
+    ROCK = 9
 
     @staticmethod
     def from_model(terrain: TerrainType):
@@ -107,6 +109,8 @@ class H3MTerrain(IntEnum):
             return H3MTerrain.LAVA
         elif terrain == TerrainType.WATER:
             return H3MTerrain.WATER
+        elif terrain == TerrainType.ROCK:
+            return H3MTerrain.ROCK
         else:
             raise RuntimeError(f"Unknown terrain: {terrain}")
 
@@ -177,6 +181,15 @@ class H3MModembedTarget(IntEnum):
     COMPLETE = 0  # Heroes3.exe
     HDMOD = 1  # Heroes3 HD.exe
     DEMO = 2  # h3demo.exe
+
+
+class H3MLogLevel(IntEnum):
+    """Logging levels"""
+
+    ERROR = 0
+    WARN = 1
+    INFO = 2
+    DEBUG = 3
 
 
 # Type definitions
@@ -255,6 +268,9 @@ _lib.h3m_towns_selectable.restype = ctypes.c_int
 _lib.h3m_player_enable.argtypes = [h3mlib_ctx_t, ctypes.c_int]
 _lib.h3m_player_enable.restype = None
 
+_lib.h3m_enable_underground.argtypes = [h3mlib_ctx_t]
+_lib.h3m_enable_underground.restype = ctypes.c_int
+
 _lib.h3m_get_format.argtypes = [h3mlib_ctx_t]
 _lib.h3m_get_format.restype = ctypes.c_int
 
@@ -297,8 +313,8 @@ _lib.h3m_object_set_owner.restype = ctypes.c_int
 _lib.h3m_object_set_subtype.argtypes = [h3mlib_ctx_t, ctypes.c_int, ctypes.c_int]
 _lib.h3m_object_set_subtype.restype = ctypes.c_int
 
-_lib.h3m_object_set_quantity.argtypes = [h3mlib_ctx_t, ctypes.c_int, ctypes.c_int]
-_lib.h3m_object_set_quantity.restype = ctypes.c_int
+_lib.h3m_object_set_quantitiy.argtypes = [h3mlib_ctx_t, ctypes.c_int, ctypes.c_int]
+_lib.h3m_object_set_quantitiy.restype = ctypes.c_int
 
 _lib.h3m_object_set_disposition.argtypes = [h3mlib_ctx_t, ctypes.c_int, ctypes.c_int]
 _lib.h3m_object_set_disposition.restype = ctypes.c_int
@@ -329,6 +345,51 @@ _lib.h3m_impassable_fill.argtypes = [
     ctypes.c_size_t,
 ]
 _lib.h3m_impassable_fill.restype = None
+
+_lib.h3m_add_obstacle.argtypes = [
+    h3mlib_ctx_t,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_uint64),
+]
+_lib.h3m_add_obstacle.restype = ctypes.c_int
+
+_lib.h3m_add_obstacle_with_passability.argtypes = [
+    h3mlib_ctx_t,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_uint64,
+    ctypes.POINTER(ctypes.c_int),
+]
+_lib.h3m_add_obstacle_with_passability.restype = ctypes.c_int
+
+_lib.h3m_add_obstacle_sized.argtypes = [
+    h3mlib_ctx_t,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_uint64),
+]
+_lib.h3m_add_obstacle_sized.restype = ctypes.c_int
+
+# Logging API
+_lib.h3mlib_set_log_level.argtypes = [ctypes.c_int]
+_lib.h3mlib_set_log_level.restype = None
 
 # Advanced API
 _lib.h3m_read_with_cbs.argtypes = [
@@ -470,6 +531,16 @@ class H3MLib:
         """
         _lib.h3m_player_enable(self._ctx, player)
 
+    def enable_underground(self) -> None:
+        """Enable underground level after map initialization
+
+        This allows the map to have both surface (z=0) and underground (z=1) levels.
+        Should be called after init_min() and before setting terrain or adding objects.
+        """
+        result = _lib.h3m_enable_underground(self._ctx)
+        if result != 0:
+            raise H3MLibError(f"Failed to enable underground: error {result}")
+
     def get_format(self) -> H3MFormat:
         """Get the map format version"""
         return H3MFormat(_lib.h3m_get_format(self._ctx))
@@ -556,7 +627,7 @@ class H3MLib:
             od_index: Object detail index
             quantity: Quantity value
         """
-        result = _lib.h3m_object_set_quantity(self._ctx, od_index, quantity)
+        result = _lib.h3m_object_set_quantitiy(self._ctx, od_index, quantity)
         if result != 0:
             raise H3MLibError(f"Failed to set object quantity: error {result}")
 
@@ -596,21 +667,167 @@ class H3MLib:
         if result != 0:
             raise H3MLibError(f"Failed to set terrain: error {result}")
 
-    def set_terrain_all(self, z: int, terrain_array: List[int]) -> None:
+    def set_terrain_all(self, z: int, terrain_array: List[H3MTerrain]) -> None:
         """Set terrain for an entire level
 
         Args:
             z: Z coordinate (0 for surface, 1 for underground)
             terrain_array: Array of terrain types (map_size * map_size elements)
         """
+        terrain = [terrain.value for terrain in terrain_array]
         map_size = self.get_map_size()
-        if len(terrain_array) != map_size * map_size:
+        if len(terrain) != map_size * map_size:
             raise ValueError(f"terrain_array must have {map_size * map_size} elements")
 
-        terrain_data = (ctypes.c_uint8 * len(terrain_array))(*terrain_array)
+        terrain_data = (ctypes.c_uint8 * len(terrain))(*terrain)
         result = _lib.h3m_terrain_set_all(self._ctx, z, terrain_data)
         if result != 0:
             raise H3MLibError(f"Failed to set terrain array: error {result}")
+
+    def impassable_fill(self, impassable_array: List[int]) -> None:
+        """Set impassable terrain data for the entire map
+
+        Args:
+            impassable_array: Array of impassable flags (map_size * map_size * 2 elements for both levels)
+        """
+        map_size = self.get_map_size()
+        expected_size = map_size * map_size * 2  # Both surface and underground
+        if len(impassable_array) != expected_size:
+            raise ValueError(f"impassable_array must have {expected_size} elements")
+
+        impassable_data = (ctypes.c_uint8 * len(impassable_array))(*impassable_array)
+        _lib.h3m_impassable_fill(self._ctx, impassable_data, len(impassable_array))
+
+    def add_obstacle(
+        self,
+        x: int,
+        y: int,
+        z: int,
+        x_max_dim: int,
+        y_max_dim: int,
+        terrain: H3MTerrain,
+    ) -> tuple[int, int, int, int]:
+        """Add an obstacle at the specified position
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+            z: Z coordinate (0 for surface, 1 for underground)
+            x_max_dim: Maximum width of obstacle
+            y_max_dim: Maximum height of obstacle
+            terrain: Terrain type for the obstacle
+
+        Returns:
+            Tuple of (actual_x_dim, actual_y_dim, od_index, passability)
+        """
+        x_dim = ctypes.c_int()
+        y_dim = ctypes.c_int()
+        od_index = ctypes.c_int()
+        passability = ctypes.c_uint64()
+
+        result = _lib.h3m_add_obstacle(
+            self._ctx,
+            x,
+            y,
+            z,
+            x_max_dim,
+            y_max_dim,
+            terrain.value,
+            ctypes.byref(x_dim),
+            ctypes.byref(y_dim),
+            ctypes.byref(od_index),
+            ctypes.byref(passability),
+        )
+        if result != 0:
+            raise H3MLibError(f"Failed to add obstacle: error {result}")
+
+        return x_dim.value, y_dim.value, od_index.value, passability.value
+
+    def add_obstacle_with_passability(
+        self,
+        x: int,
+        y: int,
+        z: int,
+        x_max_dim: int,
+        y_max_dim: int,
+        terrain: H3MTerrain,
+        passability: int,
+    ) -> int:
+        """Add an obstacle with specific passability pattern
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+            z: Z coordinate (0 for surface, 1 for underground)
+            x_max_dim: Maximum width of obstacle
+            y_max_dim: Maximum height of obstacle
+            terrain: Terrain type for the obstacle
+            passability: 64-bit passability pattern
+
+        Returns:
+            Object detail index
+        """
+        od_index = ctypes.c_int()
+
+        result = _lib.h3m_add_obstacle_with_passability(
+            self._ctx,
+            x,
+            y,
+            z,
+            x_max_dim,
+            y_max_dim,
+            terrain.value,
+            passability,
+            ctypes.byref(od_index),
+        )
+        if result != 0:
+            raise H3MLibError(
+                f"Failed to add obstacle with passability: error {result}"
+            )
+
+        return od_index.value
+
+    def add_obstacle_sized(
+        self,
+        x: int,
+        y: int,
+        z: int,
+        width: int,
+        height: int,
+        terrain: H3MTerrain,
+    ) -> tuple[int, int, int, int]:
+        """Add an obstacle with specific dimensions
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+            z: Z coordinate (0 for surface, 1 for underground)
+            width: Desired width of obstacle (1-7)
+            height: Desired height of obstacle (1-5)
+            terrain: Terrain type for the obstacle
+
+        Returns:
+            Tuple of (od_index, passability)
+        """
+        od_index = ctypes.c_int()
+        passability = ctypes.c_uint64()
+
+        result = _lib.h3m_add_obstacle_sized(
+            self._ctx,
+            x,
+            y,
+            z,
+            width,
+            height,
+            terrain.value,
+            ctypes.byref(od_index),
+            ctypes.byref(passability),
+        )
+        if result != 0:
+            # in case there is no such obstacle randomize a smaller one
+            return self.add_obstacle(x, y, z, width, height, terrain)
+
+        return width, height, od_index.value, passability.value
 
     @staticmethod
     def get_object_type(name: str) -> MetaObject:
@@ -624,8 +841,21 @@ class H3MLib:
         """
         return MetaObject(_lib.h3m_get_object_type(name.encode("utf-8")))
 
+    @staticmethod
+    def set_log_level(level: H3MLogLevel) -> None:
+        """Set the global logging level for h3mlib
 
-def h3m_2d_to_1d(size: int, x: int, y: int, z: int = 0) -> int:
+        Args:
+            level: Logging level (ERROR, WARN, INFO, DEBUG)
+        """
+        _lib.h3mlib_set_log_level(level.value)
+
+
+def h3m_2d_to_1d(size: int, x: int, y: int) -> int:
+    return h3m_2d_to_1d_by_level(size, x, y, 0)
+
+
+def h3m_2d_to_1d_by_level(size: int, x: int, y: int, z: int = 0) -> int:
     """Convert 2D coordinates to 1D array index
 
     Args:
