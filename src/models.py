@@ -3,6 +3,9 @@ from typing import DefaultDict, Dict, List, Optional, Tuple, Union, Literal, Ann
 from pydantic import BaseModel, Field
 from enum import Enum
 
+from logger import logger
+from paths import PathBuilder
+
 
 class MapSize(str, Enum):
     S = "S"
@@ -21,6 +24,38 @@ MAP_DIMENSIONS = {
 
 def get_map_dimensions(size: MapSize) -> Tuple[int, int]:
     return MAP_DIMENSIONS[size]
+
+
+class TerrainType(str, Enum):
+    GRASS = "g"
+    DIRT = "d"
+    SAND = "sa"
+    SNOW = "sn"
+    SWAMP = "sw"
+    ROUGH = "r"
+    SUBTERRANEAN = "su"
+    LAVA = "l"
+    WATER = "w"
+    ROCK = "r"
+
+
+class Location(str, Enum):
+    SURFACE = "s"
+    UNDERGROUND = "u"
+
+    def to_level(self) -> int:
+        mapping = {
+            Location.SURFACE: 0,
+            Location.UNDERGROUND: 1,
+        }
+        return mapping[self]
+
+    def default_tile(self) -> TerrainType:
+        mapping = {
+            Location.SURFACE: TerrainType.WATER,
+            Location.UNDERGROUND: TerrainType.ROCK,
+        }
+        return mapping[self]
 
 
 class Rect(BaseModel):
@@ -112,6 +147,42 @@ class Path(BaseModel):
         ...,
         description="A path given as a list of points, these will be connected via shortest path.",
     )
+
+    def all_tiles_on_passable_grid(
+        self,
+        grid_present: Dict[int, Dict[int, Dict[Location, bool]]],
+        location: Location,
+    ) -> List[Tuple[int, int]]:
+        """
+        Generate path tiles that respect passability constraints.
+        Uses A* pathfinding between each pair of points in the path.
+
+        Args:
+            grid_present: 3D grid where True means tile is passable
+            location: Which level (surface/underground) to check
+
+        Returns:
+            List of (x, y) coordinates forming a valid path
+        """
+        logger.debug(f"Looking for tiles for a path {self.path}")
+        if len(self.path) < 2:
+            return [(point.x, point.y) for point in self.path]
+
+        def is_passable(x: int, y: int) -> bool:
+            return grid_present[x][y][location]
+
+        builder = PathBuilder(is_passable=is_passable)
+        all_tiles = []
+
+        for i in range(len(self.path) - 1):
+            start = self.path[i]
+            end = self.path[i + 1]
+            segment = builder.build_path(start.x, start.y, end.x, end.y)
+            all_tiles.extend(segment)
+
+        logger.debug(f"Passable tiles for a path: {all_tiles}")
+
+        return all_tiles
 
     def all_tiles(self) -> List[Tuple[int, int]]:
         if len(self.path) < 2:
@@ -308,38 +379,6 @@ Shape = Annotated[
 ]
 
 
-class TerrainType(str, Enum):
-    GRASS = "g"
-    DIRT = "d"
-    SAND = "sa"
-    SNOW = "sn"
-    SWAMP = "sw"
-    ROUGH = "r"
-    SUBTERRANEAN = "su"
-    LAVA = "l"
-    WATER = "w"
-    ROCK = "r"
-
-
-class Location(str, Enum):
-    SURFACE = "s"
-    UNDERGROUND = "u"
-
-    def to_level(self) -> int:
-        mapping = {
-            Location.SURFACE: 0,
-            Location.UNDERGROUND: 1,
-        }
-        return mapping[self]
-
-    def default_tile(self) -> TerrainType:
-        mapping = {
-            Location.SURFACE: TerrainType.WATER,
-            Location.UNDERGROUND: TerrainType.ROCK,
-        }
-        return mapping[self]
-
-
 class BuildingType(str, Enum):
     # mines
     SAWMILL = "s1"
@@ -360,7 +399,7 @@ class BuildingType(str, Enum):
     def dimensions(self) -> Tuple[int, int]:
         # These might be a bit bigger than the actual sprite to ensure the lack of collisions.
         mapping = {
-            BuildingType.SUBTERRANEAN_GATE: (3, 2),
+            BuildingType.SUBTERRANEAN_GATE: (3, 3),
             BuildingType.SAWMILL: (4, 3),
             BuildingType.ORE_PIT: (3, 3),
             BuildingType.SULFUR_DUNE: (3, 1),
@@ -497,6 +536,14 @@ class Zone(BaseModel):
                 tiles[x][y] = True
         return tiles
 
+    def expanded_perimiter(self) -> List[Tuple[int, int]]:
+        new_tiles = set()
+        for tile in self.all_tiles():
+            new_tiles.add(tile)
+            for x, y in ADJACENT:
+                new_tiles.add((tile[0] + x, tile[1] + y))
+        return list(new_tiles)
+
 
 class OutsideSpec(BaseModel):
     obstacles: List[Obstacle] = Field(
@@ -557,6 +604,18 @@ class CodeResponse(BaseModel):
     next_action: str = Field(
         default="finish", description="Next action expected from the model."
     )
+
+
+ADJACENT = (
+    (-1, 1),
+    (0, 1),
+    (0, -1),
+    (1, 0),
+    (-1, 0),
+    (1, -1),
+    (1, 1),
+    (-1, -1),
+)
 
 
 ModelResponseUnion = Union[CreateMapRequest, Finish]

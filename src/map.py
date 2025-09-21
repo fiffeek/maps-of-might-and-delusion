@@ -1,10 +1,11 @@
 from collections import defaultdict
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
 from logger import logger
 from models import (
+    ADJACENT,
     Building,
     BuildingType,
     CreateMapRequest,
@@ -130,7 +131,6 @@ class Grid(BaseModel):
     def would_be_touching_water(
         self, x: int, y: int, dimensions: Tuple[int, int], location: Location
     ) -> bool:
-        offsets = ((-1, 1), (0, 1), (0, -1), (1, 0), (-1, 0), (1, -1), (1, 1), (-1, -1))
         corners = (
             (x, y),
             (x - dimensions[0], y),
@@ -139,7 +139,7 @@ class Grid(BaseModel):
         )
         touching_corners = 0
         for x_corner, y_corner in corners:
-            for x_offset, y_offset in offsets:
+            for x_offset, y_offset in ADJACENT:
                 new_x = x_corner + x_offset
                 new_y = y_corner + y_offset
                 if not self.in_boundaries(new_x, new_y):
@@ -152,23 +152,13 @@ class Grid(BaseModel):
         return False
 
     def remove_useless_water(self):
-        adjacent = (
-            (-1, 1),
-            (0, 1),
-            (0, -1),
-            (1, 0),
-            (-1, 0),
-            (1, -1),
-            (1, 1),
-            (-1, -1),
-        )
         for x, row in self.grid.items():
             for y, _ in row.items():
                 if self.grid[x][y][Location.SURFACE] != TerrainType.WATER:
                     continue
                 surrounded_water = False
                 surrounded_tile = None
-                for x_offset, y_offset in adjacent:
+                for x_offset, y_offset in ADJACENT:
                     new_x = x + x_offset
                     new_y = y + y_offset
                     if not self.in_boundaries(new_x, new_y):
@@ -200,7 +190,7 @@ class ObjectsGrid(BaseModel):
     )
     boundaries: Tuple[int, int]
     offset_check: int = Field(
-        default=10,
+        default=5,
         description="The offset for searching for empty tiles or similar buildings.",
     )
 
@@ -282,21 +272,23 @@ class ObjectsGrid(BaseModel):
                 return True
         return False
 
-    def place_building_at_both_levels(self, building: Building):
+    def place_building_at_both_levels(self, building: Building) -> bool:
         if building == self.buildings[building.at.x][building.at.y][Location.SURFACE]:
             logger.debug(f"The same buinding at {building.at} already exists")
-            return
+            return True
 
         at = self.find_connected_free_space(
             building.at, building.building_type.dimensions
         )
         if at is None:
             logger.warning(f"cant place building {building}")
-            return
+            return False
 
         building.at = at
         self.__place_building(building, Location.SURFACE)
         self.__place_building(building, Location.UNDERGROUND)
+        logger.debug(f"Placed {building} at {at}")
+        return True
 
     def place_town(self, zone: Zone, town: Town):
         logger.debug(f"Will try to place the town {town} at {zone.location}")
@@ -396,17 +388,21 @@ class ObjectsGrid(BaseModel):
     def __can_place_at(
         self, x: int, y: int, dimensions: Tuple[int, int], location: Location
     ) -> bool:
+        logger.debug(f"Checking {x, y} for object placement:")
         for x_offset in range(dimensions[0]):
             for y_offset in range(dimensions[1]):
                 check_x = x - x_offset
                 check_y = y - y_offset
-                logger.debug(f"Checking {check_x, check_y} for object placement")
+                logger.debug(f"Checking {check_x, check_y} for dimensions placement")
                 if not self.in_boundaries(check_x, check_y):
                     return False
                 if not self.placeable[check_x][check_y][location]:
+                    logger.debug(f"Not pleaceable {check_x, check_y}")
                     return False
                 if self.object_present[check_x][check_y][location]:
+                    logger.debug(f"Object already presen {check_x, check_y}")
                     return False
+        logger.debug(f"Can place at {x, y}")
         return True
 
 
@@ -444,26 +440,31 @@ class MapRepresentation(BaseModel):
         map.place_obstacles()
         return map
 
+    def set_tiles(self, tiles: List[Tuple[int, int]], zone: Zone):
+        for x, y in tiles:
+            if self.terrain.occupied(x, y, zone.location):
+                logger.warning(f"Tile at {x, y} is already_occupied boundaries")
+                continue
+
+            logger.debug(f"Setting tile at {x, y} to {zone.terrain}")
+            self.terrain.set_tile(x, y, zone.location, zone.terrain)
+
+            if zone.terrain in (TerrainType.WATER, TerrainType.ROCK):
+                self.objects.set_unplaceable(x, y, zone.location)
+            else:
+                self.objects.set_placeable(x, y, zone.location)
+
     def create_zones(self) -> None:
         for zone in self.request.zones:
-            self.zones[zone.id] = zone
             logger.debug(f"Creating zone {zone.id}")
-            for x, y in zone.all_tiles():
-                if self.terrain.occupied(x, y, zone.location):
-                    logger.warning(f"Tile at {x, y} is already_occupied boundaries")
-                    continue
-
-                logger.debug(f"Setting tile at {x, y} to {zone.terrain}")
-                self.terrain.set_tile(x, y, zone.location, zone.terrain)
-
-                if zone.terrain in (TerrainType.WATER, TerrainType.ROCK):
-                    self.objects.set_unplaceable(x, y, zone.location)
-                else:
-                    self.objects.set_placeable(x, y, zone.location)
+            self.zones[zone.id] = zone
+            self.set_tiles(zone.all_tiles(), zone)
         self.terrain.remove_useless_water()
         for zone in self.request.zones:
             for road in zone.roads:
-                for x, y in road.path.all_tiles():
+                for x, y in road.path.all_tiles_on_passable_grid(
+                    grid_present=self.terrain.grid_present, location=zone.location
+                ):
                     self.terrain.set_road(x, y, zone.location, road.road_type)
                     self.objects.set_unplaceable(x, y, zone.location)
         for zone in self.request.zones:
@@ -496,6 +497,14 @@ class MapRepresentation(BaseModel):
             for obstacle in zone.obstacles:
                 self.objects.place_obstacle(zone=zone, obstacle=obstacle)
 
+    def expand_zones_with_entrances(self) -> None:
+        for _, zone in self.zones.items():
+            if (
+                zone.underground_entrance is not None
+                and zone.location == Location.UNDERGROUND
+            ):
+                self.set_tiles(zone.expanded_perimiter(), zone)
+
     def place_buildings(self) -> None:
         for zone_id, zone in self.zones.items():
             if zone.underground_entrance and self.has_underground:
@@ -511,7 +520,10 @@ class MapRepresentation(BaseModel):
                     continue
 
                 logger.debug(f"Placing an underground entrance for zone {zone_id}")
-                self.objects.place_building_at_both_levels(building)
+                if not self.objects.place_building_at_both_levels(building):
+                    # when the placement of the SUBTERRANEAN_GATE fails, usually the entrance zones are too small
+                    self.expand_zones_with_entrances()
+                    self.objects.place_building_at_both_levels(building)
             for building in zone.buildings:
                 if (
                     building.building_type == BuildingType.SUBTERRANEAN_GATE
