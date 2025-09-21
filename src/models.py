@@ -1,4 +1,5 @@
-from typing import Dict, List, Optional, Tuple, Union, Literal, Annotated
+from collections import defaultdict
+from typing import DefaultDict, Dict, List, Optional, Tuple, Union, Literal, Annotated
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -482,6 +483,19 @@ class Zone(BaseModel):
         ...,
         description="If there is a town here owned by the player and the player will start in this area, mark as true.",
     )
+
+    def all_tiles(self) -> List[Tuple[int, int]]:
+        tiles = []
+        for shape in self.shape:
+            tiles.extend(shape.all_tiles())
+        return tiles
+
+    def all_tiles_dict(self) -> DefaultDict[int, DefaultDict[int, bool]]:
+        tiles = defaultdict(lambda: defaultdict(lambda: False))
+        for shape in self.shape:
+            for x, y in shape.all_tiles():
+                tiles[x][y] = True
+        return tiles
 
 
 class OutsideSpec(BaseModel):

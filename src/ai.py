@@ -118,6 +118,9 @@ Requirements:
     24. Use obstacles inteligently to block access to some resources. Lots of obstacles are expected.
     25. Obstacles should not be placed on rivers.
     26. Zones should have at least 4 shapes.
+    27. There should be a considerable number of roads so that players can travel faster between objectives.
+    28. Rivers cant be placed on water. They should be placed inland.
+    29. Do not put small lakes or small puddles of water inside the land.
 Constraints:
     1. Anything left out from the zones will be "water" on the surface and "rock" underground.
 Hints:
