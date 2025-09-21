@@ -113,6 +113,8 @@ Requirements:
     19. Any buildings and towns should be placed so that there is a little space between them (at least 1 tile).
     20. Shipyards or boats have to be placed on the perimiter of the zones that touch water.
     21. Maximize the space used by zones.
+    22. Any castle should have a road leading up to it.
+    23. For starting areas there should be a road between the ORE_PIT and the town; same for SAWMILL and the town.
 Constraints:
     1. Anything left out from the zones will be "water" on the surface and "rock" underground.
 Hints:

@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional, Tuple, Union, Literal, Annotated
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field
 from enum import Enum
 
 
@@ -34,11 +34,6 @@ class Rect(BaseModel):
     w: int = Field(..., ge=1, description="Width in tiles (>=1).")
     h: int = Field(..., ge=1, description="Height in tiles (>=1).")
 
-    @computed_field
-    @property
-    def area(self) -> int:
-        return self.w * self.h
-
     def bounds(self) -> Tuple[int, int, int, int]:
         """Return (x1, y1, x2, y2) where x2/y2 are exclusive: [x1, x2), [y1, y2)."""
         return self.x, self.y, self.x + self.w, self.y + self.h
@@ -65,19 +60,11 @@ class Circle(BaseModel):
     cy: int = Field(..., ge=0, description="Center Y in tiles.")
     r: int = Field(..., ge=1, description="Radius in tiles (>=1).")
 
-    @computed_field
-    @property
-    def area(self) -> float:
-        # Geometric area (not rasterized tile count)
-        from math import pi
-
-        return pi * (self.r**2)
-
     def bounds(self) -> Tuple[int, int, int, int]:
         """Axis-aligned bbox (exclusive max): (x1, y1, x2, y2)."""
         x1 = self.cx - self.r
         y1 = self.cy - self.r
-        x2 = self.cx + self.r + 1  # exclusive
+        x2 = self.cx + self.r + 1
         y2 = self.cy + self.r + 1
         return x1, y1, x2, y2
 
@@ -114,7 +101,210 @@ class Point(BaseModel):
         return [(self.x, self.y)]
 
 
-Shape = Annotated[Union[Rect, Circle], Field(discriminator="kind")]
+class Path(BaseModel):
+    """
+    Represents a path. A path will be made between each of the points using basic manhattan distance algorithm.
+    """
+
+    kind: Literal["path"] = Field("path", description="Discriminator for shape union.")
+    path: List[Point] = Field(
+        ...,
+        description="A path given as a list of points, these will be connected via shortest path.",
+    )
+
+    def all_tiles(self) -> List[Tuple[int, int]]:
+        if len(self.path) < 2:
+            return [(point.x, point.y) for point in self.path]
+
+        tiles = []
+        for i in range(len(self.path) - 1):
+            start = self.path[i]
+            end = self.path[i + 1]
+
+            x, y = start.x, start.y
+            target_x, target_y = end.x, end.y
+
+            tiles.append((x, y))
+
+            for _ in range(abs(target_x - x) + abs(target_y - y)):
+                if x != target_x:
+                    x += 1 if target_x > x else -1
+                elif y != target_y:
+                    y += 1 if target_y > y else -1
+                tiles.append((x, y))
+
+        seen = set()
+        result = []
+        for tile in tiles:
+            if tile not in seen:
+                seen.add(tile)
+                result.append(tile)
+
+        return result
+
+
+class Triangle(BaseModel):
+    """
+    Triangle on the tile grid. Defined by three vertices.
+    """
+
+    kind: Literal["triangle"] = Field(
+        "triangle", description="Discriminator for shape union."
+    )
+    x1: int = Field(..., ge=0, description="First vertex X coordinate.")
+    y1: int = Field(..., ge=0, description="First vertex Y coordinate.")
+    x2: int = Field(..., ge=0, description="Second vertex X coordinate.")
+    y2: int = Field(..., ge=0, description="Second vertex Y coordinate.")
+    x3: int = Field(..., ge=0, description="Third vertex X coordinate.")
+    y3: int = Field(..., ge=0, description="Third vertex Y coordinate.")
+
+    def bounds(self) -> Tuple[int, int, int, int]:
+        min_x = min(self.x1, self.x2, self.x3)
+        min_y = min(self.y1, self.y2, self.y3)
+        max_x = max(self.x1, self.x2, self.x3)
+        max_y = max(self.y1, self.y2, self.y3)
+        return min_x, min_y, max_x + 1, max_y + 1
+
+    def all_tiles(self) -> List[Tuple[int, int]]:
+        """
+        Return a list of (x, y) tiles inside or on the triangle boundary.
+        Uses barycentric coordinates for point-in-triangle test.
+        """
+        tiles: List[Tuple[int, int]] = []
+        min_x, min_y, max_x, max_y = self.bounds()
+
+        def point_in_triangle(px: int, py: int) -> bool:
+            denom = (self.y2 - self.y3) * (self.x1 - self.x3) + (self.x3 - self.x2) * (
+                self.y1 - self.y3
+            )
+            if abs(denom) < 1e-10:
+                return False
+
+            a = (
+                (self.y2 - self.y3) * (px - self.x3)
+                + (self.x3 - self.x2) * (py - self.y3)
+            ) / denom
+            b = (
+                (self.y3 - self.y1) * (px - self.x3)
+                + (self.x1 - self.x3) * (py - self.y3)
+            ) / denom
+            c = 1 - a - b
+
+            return a >= 0 and b >= 0 and c >= 0
+
+        for yy in range(min_y, max_y):
+            for xx in range(min_x, max_x):
+                if point_in_triangle(xx, yy):
+                    tiles.append((xx, yy))
+
+        return tiles
+
+
+class Zigzag(BaseModel):
+    """
+    Zigzag pattern on the tile grid. Creates a zigzag path between two points.
+    """
+
+    kind: Literal["zigzag"] = Field(
+        "zigzag", description="Discriminator for shape union."
+    )
+    start_x: int = Field(..., ge=0, description="Starting X coordinate.")
+    start_y: int = Field(..., ge=0, description="Starting Y coordinate.")
+    end_x: int = Field(..., ge=0, description="Ending X coordinate.")
+    end_y: int = Field(..., ge=0, description="Ending Y coordinate.")
+    amplitude: int = Field(..., ge=1, description="Zigzag amplitude in tiles.")
+    frequency: int = Field(..., ge=1, description="Number of zigzag cycles.")
+
+    def bounds(self) -> Tuple[int, int, int, int]:
+        """Axis-aligned bbox (exclusive max): (x1, y1, x2, y2)."""
+        min_x = min(self.start_x, self.end_x) - self.amplitude
+        min_y = min(self.start_y, self.end_y) - self.amplitude
+        max_x = max(self.start_x, self.end_x) + self.amplitude
+        max_y = max(self.start_y, self.end_y) + self.amplitude
+        return max(0, min_x), max(0, min_y), max_x + 1, max_y + 1
+
+    def all_tiles(self) -> List[Tuple[int, int]]:
+        """
+        Return a list of (x, y) tiles forming the zigzag pattern.
+        """
+        import math
+
+        tiles: List[Tuple[int, int]] = []
+
+        dx = self.end_x - self.start_x
+        dy = self.end_y - self.start_y
+        length = max(abs(dx), abs(dy), 1)
+
+        perp_x = -dy / length if length > 0 else 0
+        perp_y = dx / length if length > 0 else 0
+
+        for i in range(length + 1):
+            t = i / length if length > 0 else 0
+
+            base_x = self.start_x + t * dx
+            base_y = self.start_y + t * dy
+
+            zigzag_t = t * self.frequency * 2 * math.pi
+            offset = math.sin(zigzag_t) * self.amplitude
+
+            x = int(round(base_x + offset * perp_x))
+            y = int(round(base_y + offset * perp_y))
+
+            if x >= 0 and y >= 0:
+                tiles.append((x, y))
+
+        seen = set()
+        result = []
+        for tile in tiles:
+            if tile not in seen:
+                seen.add(tile)
+                result.append(tile)
+
+        return result
+
+
+class Oval(BaseModel):
+    """
+    Oval (ellipse) on the tile grid. Center at (cx, cy) with radii rx and ry.
+    """
+
+    kind: Literal["oval"] = Field("oval", description="Discriminator for shape union.")
+    cx: int = Field(..., ge=0, description="Center X coordinate.")
+    cy: int = Field(..., ge=0, description="Center Y coordinate.")
+    rx: int = Field(..., ge=1, description="Horizontal radius in tiles.")
+    ry: int = Field(..., ge=1, description="Vertical radius in tiles.")
+
+    def bounds(self) -> Tuple[int, int, int, int]:
+        """Axis-aligned bbox (exclusive max): (x1, y1, x2, y2)."""
+        x1 = self.cx - self.rx
+        y1 = self.cy - self.ry
+        x2 = self.cx + self.rx + 1
+        y2 = self.cy + self.ry + 1
+        return x1, y1, x2, y2
+
+    def all_tiles(self) -> List[Tuple[int, int]]:
+        """
+        Return a list of (x, y) tiles inside or on the oval boundary.
+        Uses ellipse equation: (x-cx)²/rx² + (y-cy)²/ry² <= 1
+        """
+        tiles: List[Tuple[int, int]] = []
+        rx_sq = self.rx * self.rx
+        ry_sq = self.ry * self.ry
+
+        for yy in range(self.cy - self.ry, self.cy + self.ry + 1):
+            for xx in range(self.cx - self.rx, self.cx + self.rx + 1):
+                dx = xx - self.cx
+                dy = yy - self.cy
+                if (dx * dx * ry_sq + dy * dy * rx_sq) <= (rx_sq * ry_sq):
+                    tiles.append((xx, yy))
+
+        return tiles
+
+
+Shape = Annotated[
+    Union[Rect, Circle, Path, Point, Triangle, Zigzag, Oval],
+    Field(discriminator="kind"),
+]
 
 
 class TerrainType(str, Enum):
@@ -167,10 +357,11 @@ class BuildingType(str, Enum):
 
     @property
     def dimensions(self) -> Tuple[int, int]:
+        # These might be a bit bigger than the actual sprite to ensure the lack of collisions.
         mapping = {
             BuildingType.SUBTERRANEAN_GATE: (3, 2),
-            BuildingType.SAWMILL: (4, 2),
-            BuildingType.ORE_PIT: (3, 2),
+            BuildingType.SAWMILL: (4, 3),
+            BuildingType.ORE_PIT: (3, 3),
             BuildingType.SULFUR_DUNE: (3, 1),
             BuildingType.ALCHEMISTS_LAB: (3, 1),
             BuildingType.GEM_POND: (3, 2),
@@ -223,41 +414,15 @@ class Town(BaseModel):
     )
 
 
+class RoadType(str, Enum):
+    DIRT = "d"
+    GRAVEL = "g"
+    COBBELSTONE = "c"
+
+
 class Road(BaseModel):
-    path: List[Point] = Field(
-        ...,
-        description="A road given as a list of points, these will be connected via shortest path.",
-    )
-
-    def all_tiles(self) -> List[Tuple[int, int]]:
-        if len(self.path) < 2:
-            return [(point.x, point.y) for point in self.path]
-
-        tiles = []
-        for i in range(len(self.path) - 1):
-            start = self.path[i]
-            end = self.path[i + 1]
-
-            x, y = start.x, start.y
-            target_x, target_y = end.x, end.y
-
-            tiles.append((x, y))
-
-            for _ in range(abs(target_x - x) + abs(target_y - y)):
-                if x != target_x:
-                    x += 1 if target_x > x else -1
-                elif y != target_y:
-                    y += 1 if target_y > y else -1
-                tiles.append((x, y))
-
-        seen = set()
-        result = []
-        for tile in tiles:
-            if tile not in seen:
-                seen.add(tile)
-                result.append(tile)
-
-        return result
+    path: Path = Field(..., description="The path representing the road.")
+    road_type: RoadType = Field(..., description="The type of the road.")
 
 
 class Obstacle(BaseModel):
@@ -293,38 +458,14 @@ class Zone(BaseModel):
     towns: List[Town] = Field(
         ..., description="Towns inside a zone, can be neutral, can be player owned."
     )
-
-
-class CreateObstacleRequest(BaseModel):
-    kind: Literal["create_obstacle_request"] = Field(
-        "create_obstacle_request", description="Discriminator for model response union."
+    roads: List[Road] = Field(
+        ...,
+        description="Roads in the zone. Should connect to other zones and significant buildings inside the zone.",
     )
-    obstacle: Obstacle = Field(..., description="Obstacle to create")
-    zone_id: str = Field(..., description="The zone to place the building in.")
-
-
-class CreateBuildingRequest(BaseModel):
-    kind: Literal["create_building_request"] = Field(
-        "create_building_request", description="Discriminator for model response union."
+    is_starting_player_area: bool = Field(
+        ...,
+        description="If there is a town here owned by the player and the player will start in this area, mark as true.",
     )
-    building: Building = Field(..., description="Describes the building to be placed.")
-    zone_id: str = Field(..., description="The zone to place the building in.")
-
-
-class CreateTownRequest(BaseModel):
-    kind: Literal["create_town_request"] = Field(
-        "create_town_request", description="Discriminator for model response union."
-    )
-    town: Town = Field(..., description="Describes the town to be placed.")
-    zone_id: str = Field(..., description="The zone to place the building in.")
-
-
-class CreateRoadRequest(BaseModel):
-    kind: Literal["create_road_request"] = Field(
-        "create_road_request", description="Discriminator for model response union."
-    )
-    road: Road = Field(..., description="Describes the road to be placed.")
-    zone_id: str = Field(..., description="The zone to place the building in.")
 
 
 class OutsideSpec(BaseModel):
