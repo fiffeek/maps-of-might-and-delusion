@@ -11,7 +11,7 @@ import os
 from enum import IntEnum
 from typing import List
 
-from models import TerrainType
+from models import RiverType, RoadType, TerrainType
 
 
 # Find the shared library
@@ -123,6 +123,49 @@ class H3MDisposition(IntEnum):
     AGGRESSIVE = 2
     HOSTILE = 3
     SAVAGE = 4
+
+
+class H3MRoadType(IntEnum):
+    """Road types"""
+
+    NONE = 0
+    DIRT = 1
+    GRAVEL = 2
+    COBBLESTONE = 3
+
+    @staticmethod
+    def from_model(road: RoadType):
+        if road == RoadType.DIRT:
+            return H3MRoadType.DIRT
+        elif road == RoadType.GRAVEL:
+            return H3MRoadType.GRAVEL
+        elif road == RoadType.COBBELSTONE:
+            return H3MRoadType.COBBLESTONE
+        else:
+            raise RuntimeError(f"Unknown road type: {road}")
+
+
+class H3MRiverType(IntEnum):
+    """River types"""
+
+    NONE = 0
+    CLEAR = 1
+    ICY = 2
+    MUDDY = 3
+    LAVA = 4
+
+    @staticmethod
+    def from_model(river: RiverType):
+        if river == RiverType.CLEAR:
+            return H3MRiverType.CLEAR
+        elif river == RiverType.ICY:
+            return H3MRiverType.ICY
+        elif river == RiverType.MUDDY:
+            return H3MRiverType.MUDDY
+        elif river == RiverType.LAVA:
+            return H3MRiverType.LAVA
+        else:
+            raise RuntimeError(f"Unknown river type: {river}")
 
 
 class MetaObject(IntEnum):
@@ -386,6 +429,16 @@ _lib.h3m_add_obstacle_sized.argtypes = [
     ctypes.POINTER(ctypes.c_uint64),
 ]
 _lib.h3m_add_obstacle_sized.restype = ctypes.c_int
+
+_lib.h3m_generate_tiles.argtypes = [
+    h3mlib_ctx_t,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.POINTER(ctypes.c_uint8),
+    ctypes.POINTER(ctypes.c_uint8),
+    ctypes.POINTER(ctypes.c_uint8),
+]
+_lib.h3m_generate_tiles.restype = ctypes.c_int
 
 # Logging API
 _lib.h3mlib_set_log_level.argtypes = [ctypes.c_int]
@@ -828,6 +881,45 @@ class H3MLib:
             return self.add_obstacle(x, y, z, width, height, terrain)
 
         return width, height, od_index.value, passability.value
+
+    def generate_tiles(
+        self,
+        size: int,
+        z: int,
+        terrain_types: List[H3MTerrain],
+        road_types: List[H3MRoadType],
+        river_types: List[H3MRiverType],
+    ) -> None:
+        """Generate tile sprites for a map level
+
+        Args:
+            size: Map size (should match current map size)
+            z: Z coordinate (0 for surface, 1 for underground)
+            terrain_types: Array of terrain type enums (size*size elements)
+            road_types: Array of road type enums (size*size elements)
+            river_types: Array of river type enums (size*size elements)
+        """
+        expected_size = size * size
+        if len(terrain_types) != expected_size:
+            raise ValueError(f"terrain_types must have {expected_size} elements")
+        if len(road_types) != expected_size:
+            raise ValueError(f"road_types must have {expected_size} elements")
+        if len(river_types) != expected_size:
+            raise ValueError(f"river_types must have {expected_size} elements")
+
+        terrain_values = [terrain.value for terrain in terrain_types]
+        road_values = [road.value for road in road_types]
+        river_values = [river.value for river in river_types]
+
+        terrain_data = (ctypes.c_uint8 * expected_size)(*terrain_values)
+        road_data = (ctypes.c_uint8 * expected_size)(*road_values)
+        river_data = (ctypes.c_uint8 * expected_size)(*river_values)
+
+        result = _lib.h3m_generate_tiles(
+            self._ctx, size, z, terrain_data, road_data, river_data
+        )
+        if result != 0:
+            raise H3MLibError(f"Failed to generate tiles: error {result}")
 
     @staticmethod
     def get_object_type(name: str) -> MetaObject:

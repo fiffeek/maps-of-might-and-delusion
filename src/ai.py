@@ -115,6 +115,9 @@ Requirements:
     21. Maximize the space used by zones.
     22. Any castle should have a road leading up to it.
     23. For starting areas there should be a road between the ORE_PIT and the town; same for SAWMILL and the town.
+    24. Use obstacles inteligently to block access to some resources. Lots of obstacles are expected.
+    25. Obstacles should not be placed on rivers.
+    26. Zones should have at least 4 shapes.
 Constraints:
     1. Anything left out from the zones will be "water" on the surface and "rock" underground.
 Hints:

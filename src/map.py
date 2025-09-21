@@ -11,6 +11,7 @@ from models import (
     Location,
     Obstacle,
     Point,
+    RiverType,
     RoadType,
     TerrainType,
     Town,
@@ -75,6 +76,9 @@ class Grid(BaseModel):
     roads: Dict[int, Dict[int, Dict[Location, Optional[RoadType]]]] = Field(
         default_factory=make_optional
     )
+    rivers: Dict[int, Dict[int, Dict[Location, Optional[RiverType]]]] = Field(
+        default_factory=make_optional
+    )
     dimensions: Tuple[int, int]
 
     def in_boundaries(self, x: int, y: int) -> bool:
@@ -96,8 +100,26 @@ class Grid(BaseModel):
                 f"Cant place road {x, y, location} on a tile without terrain"
             )
             return
+        if self.grid[x][y][location] == TerrainType.WATER:
+            logger.debug(f"Cant place a road at {x, y, location, road} on water")
+            return
         logger.debug(f"Setting road at {x, y, location} to {road}")
         self.roads[x][y][location] = road
+
+    def set_river(self, x: int, y: int, location: Location, river: RiverType):
+        if not self.in_boundaries(x, y):
+            logger.warning(f"River is not in boundaries ({x, y})")
+            return
+        if not self.grid_present[x][y][location]:
+            logger.warning(
+                f"Cant place river {x, y, location} on a tile without terrain"
+            )
+            return
+        if self.grid[x][y][location] == TerrainType.WATER:
+            logger.debug(f"Cant place a river at {x, y, location, river} on water")
+            return
+        logger.debug(f"Setting river at {x, y, location} to {river}")
+        self.rivers[x][y][location] = river
 
     def occupied(self, x: int, y: int, location: Location) -> bool:
         return self.grid_present[x][y][location]
@@ -390,6 +412,10 @@ class MapRepresentation(BaseModel):
             for road in zone.roads:
                 for x, y in road.path.all_tiles():
                     self.terrain.set_road(x, y, zone.location, road.road_type)
+                    self.objects.set_unplaceable(x, y, zone.location)
+            for river in zone.rivers:
+                for x, y in river.path.all_tiles():
+                    self.terrain.set_river(x, y, zone.location, river.river_type)
                     self.objects.set_unplaceable(x, y, zone.location)
             logger.debug("Zone created")
 

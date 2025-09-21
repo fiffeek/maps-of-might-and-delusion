@@ -1,6 +1,14 @@
 from typing import List
 from ai import AI
-from h3m.lib import H3MFormat, H3MLib, H3MLogLevel, H3MTerrain, h3m_2d_to_1d
+from h3m.lib import (
+    H3MFormat,
+    H3MLib,
+    H3MLogLevel,
+    H3MRiverType,
+    H3MRoadType,
+    H3MTerrain,
+    h3m_2d_to_1d,
+)
 from h3m.objects import H3MBuilding, H3MTown
 from map import MapRepresentation
 from models import (
@@ -90,6 +98,57 @@ class MapGenerator:
             if map.has_underground:
                 h3m.set_terrain_all(
                     Location.UNDERGROUND.to_level(), underground_terrain
+                )
+
+            surface_roads: List[H3MRoadType] = [H3MRoadType.NONE] * (
+                map_size * map_size
+            )
+            underground_roads: List[H3MRoadType] = [H3MRoadType.NONE] * (
+                map_size * map_size
+            )
+            for x, row in map.terrain.roads.items():
+                for y, column in row.items():
+                    for location, road_type in column.items():
+                        index = h3m_2d_to_1d(map_size, x, y)
+                        if road_type is not None and location == Location.SURFACE:
+                            surface_roads[index] = H3MRoadType.from_model(road_type)
+                            continue
+                        if road_type is not None and location == Location.UNDERGROUND:
+                            underground_roads[index] = H3MRoadType.from_model(road_type)
+                            continue
+
+            surface_rivers: List[H3MRiverType] = [H3MRiverType.NONE] * (
+                map_size * map_size
+            )
+            underground_rivers: List[H3MRiverType] = [H3MRiverType.NONE] * (
+                map_size * map_size
+            )
+            for x, row in map.terrain.rivers.items():
+                for y, column in row.items():
+                    for location, river_type in column.items():
+                        index = h3m_2d_to_1d(map_size, x, y)
+                        if river_type is not None and location == Location.SURFACE:
+                            surface_rivers[index] = H3MRiverType.from_model(river_type)
+                            continue
+                        if river_type is not None and location == Location.UNDERGROUND:
+                            underground_rivers[index] = H3MRiverType.from_model(
+                                river_type
+                            )
+                            continue
+            h3m.generate_tiles(
+                map_size,
+                Location.SURFACE.to_level(),
+                terrain_types=surface_terrain,
+                road_types=surface_roads,
+                river_types=surface_rivers,
+            )
+            if map.has_underground:
+                h3m.generate_tiles(
+                    map_size,
+                    Location.UNDERGROUND.to_level(),
+                    terrain_types=underground_terrain,
+                    road_types=underground_roads,
+                    river_types=underground_rivers,
                 )
 
             for x, row in map.objects.obstacles.items():

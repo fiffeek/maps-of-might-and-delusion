@@ -420,6 +420,18 @@ class RoadType(str, Enum):
     COBBELSTONE = "c"
 
 
+class RiverType(str, Enum):
+    CLEAR = "c"
+    ICY = "i"
+    MUDDY = "m"
+    LAVA = "l"
+
+
+class River(BaseModel):
+    path: Path = Field(..., description="The path representing the river.")
+    river_type: RiverType = Field(..., description="The type of the river.")
+
+
 class Road(BaseModel):
     path: Path = Field(..., description="The path representing the road.")
     road_type: RoadType = Field(..., description="The type of the road.")
@@ -461,6 +473,10 @@ class Zone(BaseModel):
     roads: List[Road] = Field(
         ...,
         description="Roads in the zone. Should connect to other zones and significant buildings inside the zone.",
+    )
+    rivers: List[River] = Field(
+        ...,
+        description="Rivers in the zone.",
     )
     is_starting_player_area: bool = Field(
         ...,
