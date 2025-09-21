@@ -198,9 +198,11 @@ class ObjectsGrid(BaseModel):
         return x >= 0 and x < self.boundaries[0] and y >= 0 and y < self.boundaries[1]
 
     def set_placeable(self, x: int, y: int, location: Location):
+        logger.debug(f"Marking {x, y} as placeable")
         self.placeable[x][y][location] = True
 
     def set_unplaceable(self, x: int, y: int, location: Location):
+        logger.debug(f"Marking {x, y} as unplaceable")
         self.placeable[x][y][location] = False
 
     def __offset_positions(self, center_x: int, center_y: int):
@@ -400,7 +402,7 @@ class ObjectsGrid(BaseModel):
                     logger.debug(f"Not pleaceable {check_x, check_y}")
                     return False
                 if self.object_present[check_x][check_y][location]:
-                    logger.debug(f"Object already presen {check_x, check_y}")
+                    logger.debug(f"Object already present {check_x, check_y}")
                     return False
         logger.debug(f"Can place at {x, y}")
         return True
@@ -446,13 +448,19 @@ class MapRepresentation(BaseModel):
                 logger.warning(f"Tile at {x, y} is already_occupied boundaries")
                 continue
 
-            logger.debug(f"Setting tile at {x, y} to {zone.terrain}")
+            logger.debug(f"Setting tile at {x, y, zone.location} to {zone.terrain}")
             self.terrain.set_tile(x, y, zone.location, zone.terrain)
 
-            if zone.terrain in (TerrainType.WATER, TerrainType.ROCK):
+            if zone.terrain == TerrainType.WATER and zone.location == Location.SURFACE:
                 self.objects.set_unplaceable(x, y, zone.location)
-            else:
-                self.objects.set_placeable(x, y, zone.location)
+                continue
+            if (
+                zone.terrain == TerrainType.ROCK
+                and zone.location == Location.UNDERGROUND
+            ):
+                self.objects.set_unplaceable(x, y, zone.location)
+                continue
+            self.objects.set_placeable(x, y, zone.location)
 
     def create_zones(self) -> None:
         for zone in self.request.zones:
@@ -469,7 +477,9 @@ class MapRepresentation(BaseModel):
                     self.objects.set_unplaceable(x, y, zone.location)
         for zone in self.request.zones:
             for river in zone.rivers:
-                for x, y in river.path.all_tiles():
+                for x, y in river.path.all_tiles_on_passable_grid(
+                    grid_present=self.terrain.grid_present, location=zone.location
+                ):
                     self.terrain.set_river(x, y, zone.location, river.river_type)
                     self.objects.set_unplaceable(x, y, zone.location)
             logger.debug("Zone created")

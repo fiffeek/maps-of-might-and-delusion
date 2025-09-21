@@ -121,6 +121,7 @@ Requirements:
     27. There should be a considerable number of roads so that players can travel faster between objectives.
     28. Rivers cant be placed on water. They should be placed inland.
     29. Do not put small lakes or small puddles of water inside the land.
+    30. Roads and rivers path points should exists within the boundaries of the zone.
 Constraints:
     1. Anything left out from the zones will be "water" on the surface and "rock" underground.
 Hints:

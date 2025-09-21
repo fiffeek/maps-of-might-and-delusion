@@ -399,7 +399,7 @@ class BuildingType(str, Enum):
     def dimensions(self) -> Tuple[int, int]:
         # These might be a bit bigger than the actual sprite to ensure the lack of collisions.
         mapping = {
-            BuildingType.SUBTERRANEAN_GATE: (3, 3),
+            BuildingType.SUBTERRANEAN_GATE: (3, 2),
             BuildingType.SAWMILL: (4, 3),
             BuildingType.ORE_PIT: (3, 3),
             BuildingType.SULFUR_DUNE: (3, 1),
