@@ -403,7 +403,7 @@ class BuildingType(str, Enum):
             BuildingType.SAWMILL: (4, 3),
             BuildingType.ORE_PIT: (3, 3),
             BuildingType.SULFUR_DUNE: (3, 1),
-            BuildingType.ALCHEMISTS_LAB: (3, 1),
+            BuildingType.ALCHEMISTS_LAB: (3, 2),
             BuildingType.GEM_POND: (3, 2),
             BuildingType.GOLD_MINE: (3, 1),
             BuildingType.ABANDONED_MINE: (3, 1),
@@ -444,6 +444,13 @@ class Building(BaseModel):
             return self.model_dump_json() == other.model_dump_json()
         return NotImplemented
 
+    def get_entrance(self) -> Tuple[int, int]:
+        """
+        The entrance for the building with respect to the right bottom corner.
+        """
+        mapping = {BuildingType.SUBTERRANEAN_GATE: (self.at.x - 1, self.at.y)}
+        return mapping[self.building_type]
+
 
 class Town(BaseModel):
     at: Point = Field(..., description="The point at which the building is located.")
@@ -452,6 +459,12 @@ class Town(BaseModel):
         ...,
         description="Optionally an owner of the building, has to be < the expected number of players.",
     )
+
+    def get_entrance(self) -> Tuple[int, int]:
+        """
+        The entrance for the sprite is in the "middle" of the town.
+        """
+        return (self.at.x - 2, self.at.y)
 
 
 class RoadType(str, Enum):

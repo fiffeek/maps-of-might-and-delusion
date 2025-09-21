@@ -2,15 +2,16 @@ import heapq
 from typing import Callable, Dict, List, Set, Tuple
 
 
+def manhattan_distance(x1: int, y1: int, x2: int, y2: int) -> int:
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
 class PathBuilder:
     def __init__(
         self, is_passable: Callable[[int, int], bool], acceptable_error: int = 5
     ) -> None:
         self.is_passable = is_passable
         self.acceptable_error = acceptable_error
-
-    def _manhattan_distance(self, x1: int, y1: int, x2: int, y2: int) -> int:
-        return abs(x1 - x2) + abs(y1 - y2)
 
     def _get_neighbors(self, x: int, y: int) -> List[Tuple[int, int]]:
         neighbors = []
@@ -63,9 +64,7 @@ class PathBuilder:
                 if (nx, ny) not in g_score or tentative_g < g_score[(nx, ny)]:
                     came_from[(nx, ny)] = (x, y)
                     g_score[(nx, ny)] = tentative_g
-                    f_score = tentative_g + self._manhattan_distance(
-                        nx, ny, goal_x, goal_y
-                    )
+                    f_score = tentative_g + manhattan_distance(nx, ny, goal_x, goal_y)
                     heapq.heappush(open_set, (f_score, tentative_g, nx, ny))
 
         # the end is unreachable but maybe something in its proximity is

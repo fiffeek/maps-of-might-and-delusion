@@ -11,6 +11,7 @@ from models import (
     CreateMapRequest,
     Location,
     Obstacle,
+    Path,
     Point,
     RiverType,
     RoadType,
@@ -81,6 +82,22 @@ class Grid(BaseModel):
         default_factory=make_optional
     )
     dimensions: Tuple[int, int]
+
+    def road_closest_to(
+        self, at: Tuple[int, int], location: Location, proximity: int = 5
+    ) -> Optional[Tuple[Point, RoadType]]:
+        for x_offset in range(-proximity, proximity):
+            for y_offset in range(-proximity, proximity):
+                if abs(x_offset) + abs(y_offset) != proximity:
+                    continue
+                new_x = at[0] + x_offset
+                new_y = at[1] + y_offset
+                if not self.in_boundaries(new_x, new_y):
+                    continue
+                road = self.roads[new_x][new_y][location]
+                if road is not None:
+                    return (Point(kind="point", x=new_x, y=new_y), road)
+        return None
 
     def in_boundaries(self, x: int, y: int) -> bool:
         return x >= 0 and x < self.dimensions[0] and y >= 0 and y < self.dimensions[1]
@@ -438,9 +455,61 @@ class MapRepresentation(BaseModel):
         )
         map.create_zones()
         map.place_towns()
+        map.snap_paths_to_towns()
         map.place_buildings()
+        map.snap_paths_to_buidings()
         map.place_obstacles()
         return map
+
+    def snap_paths_to_towns(self):
+        """
+        Snaps paths from towns to nearest path.
+        """
+        for _, row in self.objects.towns.items():
+            for _, column in row.items():
+                for location, town in column.items():
+                    if town is None:
+                        continue
+                    x, y = town.get_entrance()
+                    maybe_road = self.terrain.road_closest_to(
+                        at=(x, y), location=location
+                    )
+                    if maybe_road is None:
+                        continue
+                    goal, road_type = maybe_road
+                    path = Path(kind="path", path=[Point(kind="point", x=x, y=y), goal])
+                    for x, y in path.all_tiles_on_passable_grid(
+                        self.terrain.grid_present, location
+                    ):
+                        self.terrain.set_road(x, y, location, road_type)
+                        self.objects.set_unplaceable(x, y, location)
+
+    def snap_paths_to_buidings(self):
+        """
+        Snaps paths from significant buildings to the nearest paths.
+        """
+        # snap paths to specific buildings
+        for _, row in self.objects.buildings.items():
+            for _, column in row.items():
+                for location, building in column.items():
+                    if building is None:
+                        continue
+                    if building.building_type not in (BuildingType.SUBTERRANEAN_GATE):
+                        continue
+                    x, y = building.get_entrance()
+                    maybe_road = self.terrain.road_closest_to(
+                        at=(x, y), location=location
+                    )
+                    logger.debug(f"Snapping paths for {x, y} with {maybe_road}")
+                    if maybe_road is None:
+                        continue
+                    goal, road_type = maybe_road
+                    path = Path(kind="path", path=[Point(kind="point", x=x, y=y), goal])
+                    for x, y in path.all_tiles_on_passable_grid(
+                        self.terrain.grid_present, location
+                    ):
+                        self.terrain.set_road(x, y, location, road_type)
+                        self.objects.set_unplaceable(x, y, location)
 
     def set_tiles(self, tiles: List[Tuple[int, int]], zone: Zone):
         for x, y in tiles:
