@@ -79,5 +79,5 @@ class StandaloneVCMI:
         with self.gui_controller as gui_controller:
             logger.debug(f"Display: {os.environ.get('DISPLAY')}")
             gui_controller.prepare()
-            gui_controller.new_map(MapSize.S)
+            gui_controller.new_map(MapSize.SMALL)
             self.vcmi.stream_logs()

@@ -9,28 +9,26 @@ from enum import Enum
 
 
 class MapSize(str, Enum):
-    S = "s"
-    M = "m"
-    L = "l"
-    XL = "xl"
+    SMALL = "s"
+    MEDIUM = "m"
+    LARGE = "l"
+    EXTRA_LARGE = "xl"
+    HUGE = "h"
+    EXTRA_HUGE = "xh"
+    GIGANTIC = "g"
 
     @staticmethod
     def from_string(set: str) -> "MapSize":
         mappers = {
-            MapSize.S.value: MapSize.S,
-            MapSize.M.value: MapSize.M,
-            MapSize.L.value: MapSize.L,
-            MapSize.XL.value: MapSize.XL,
+            MapSize.SMALL.value: MapSize.SMALL,
+            MapSize.MEDIUM.value: MapSize.MEDIUM,
+            MapSize.LARGE.value: MapSize.LARGE,
+            MapSize.EXTRA_LARGE.value: MapSize.EXTRA_LARGE,
+            MapSize.HUGE.value: MapSize.HUGE,
+            MapSize.EXTRA_HUGE.value: MapSize.EXTRA_HUGE,
+            MapSize.GIGANTIC.value: MapSize.GIGANTIC,
         }
         return mappers[set]
-
-
-MAP_DIMENSIONS = {
-    MapSize.S: (36, 36),
-    MapSize.M: (72, 72),
-    MapSize.L: (108, 108),
-    MapSize.XL: (144, 144),
-}
 
 
 class ZoneType(str, Enum):

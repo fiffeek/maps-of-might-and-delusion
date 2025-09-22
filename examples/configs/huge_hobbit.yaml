@@ -1,0 +1,10 @@
+---
+llm_seed: 42
+players: 8
+humans: 4
+map_size: h
+freeform: |
+    - no underground
+    - do it in the theme of the Hobbit (or the Lord of the Rings)
+    - ban pandora box
+    - do not request any custom objects for treasure, rely on defaults!
