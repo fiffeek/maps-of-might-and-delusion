@@ -1,0 +1,11 @@
+---
+llm_seed: 42
+players: 8
+humans: 4
+map_size: l
+freeform: |
+    - the players starting zones need to have WEAK monsters
+    - place a choke point in the middle of the map, this zone should be the biggest with the most treasure
+    - the choke point should be guarded
+    - place the player in the maximum distance between one another
+    - no underground

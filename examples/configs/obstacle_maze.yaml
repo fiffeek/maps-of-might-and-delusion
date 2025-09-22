@@ -1,0 +1,8 @@
+---
+llm_seed: 42
+players: 2
+humans: 2
+map_size: m
+freeform: |
+    - no underground
+    - on surface create a maze out of sealed zones

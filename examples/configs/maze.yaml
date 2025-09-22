@@ -1,0 +1,7 @@
+---
+llm_seed: 42
+players: 4
+humans: 4
+map_size: m
+freeform: |
+    - go crazy with portals, generate lots of zones, make it a maze

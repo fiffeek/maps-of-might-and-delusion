@@ -1,0 +1,8 @@
+---
+llm_seed: 44
+players: 2
+humans: 2
+map_size: m
+freeform: |
+    - no underground
+    - go nuts with the zones, be creative, show us the best story!

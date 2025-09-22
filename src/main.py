@@ -1,20 +1,32 @@
+import pathlib
 import click
-from app import Application
-from file import os_expand
+from app import StandaloneVCMI, VCMIGeneratorApp
 from logger import setup_logging
 
 
 @click.group()
 @click.option("--debug", is_flag=True, help="Enable debug logging")
+@click.pass_context
+def main(ctx, debug: bool):
+    setup_logging(debug)
+    ctx.ensure_object(dict)
+
+
+@main.command()
 @click.option(
-    "--homm-data-path",
-    help="Path to the homm3 data",
+    "--config-path",
+    help="Path to the configuration of the generation engine",
     required=True,
 )
 @click.option(
     "--xauth-dir",
     help="Path to where to generate the xauth file to",
-    required=True,
+    default=pathlib.Path(__file__).parent.parent.resolve() / "xauth",
+)
+@click.option(
+    "--cache",
+    help="Path to save the LLM responses to.",
+    default="$XDG_CACHE_HOME/aiomad/responses",
 )
 @click.option(
     "--repository",
@@ -27,53 +39,80 @@ from logger import setup_logging
     default="dev",
 )
 @click.option(
+    "--homm-data-path",
+    help="Path to the homm3 data",
+    required=True,
+)
+@click.option(
+    "--xauth-dir",
+    help="Path to where to generate the xauth file to",
+    default=pathlib.Path(__file__).parent.parent.resolve() / "xauth",
+)
+@click.option(
     "--display",
     help="X display to create",
     default=42,
 )
-@click.option(
-    "--cache",
-    help="Path to save the LLM responses to.",
-    default="$XDG_CACHE_HOME/aiomad/responses",
-)
 @click.pass_context
-def main(
-    ctx, debug: bool, homm_data_path: str, repository, tag, display, xauth_dir, cache
+def generate(
+    ctx,
+    config_path: str,
+    homm_data_path: str,
+    repository: str,
+    tag: str,
+    display: int,
+    xauth_dir: str,
+    cache: str,
 ):
-    setup_logging(debug)
-    ctx.ensure_object(dict)
-    ctx.obj["app"] = Application(
+    app = VCMIGeneratorApp(
         cache_path=cache,
         homm_data_path=homm_data_path,
         repository=repository,
         tag=tag,
         display=display,
         xauth_dir=xauth_dir,
+        config_path=config_path,
     )
+    app.generate_map()
 
 
 @main.command()
 @click.option(
-    "--seed",
-    help="A seed for map generation",
-    default=1,
+    "--repository",
+    help="Docker image repository",
+    default="vcmi",
 )
 @click.option(
-    "--save-directory",
-    help="Where to save the generated mod with templates",
-    default="$HOME/.local/share/vcmi/Mods/momd/",
+    "--tag",
+    help="Docker image tag",
+    default="dev",
+)
+@click.option(
+    "--homm-data-path",
+    help="Path to the homm3 data",
+    required=True,
+)
+@click.option(
+    "--xauth-dir",
+    help="Path to where to generate the xauth file to",
+    default=pathlib.Path(__file__).parent.parent.resolve() / "xauth",
+)
+@click.option(
+    "--display",
+    help="X display to create",
+    default=42,
 )
 @click.pass_context
-def generate(ctx, seed: int, save_directory: str):
-    save_directory = os_expand(save_directory)
-    app: Application = ctx.obj["app"]
-    app.generate_map(seed, save_directory)
-
-
-@main.command()
-@click.pass_context
-def standalone_vcmi(ctx):
-    app: Application = ctx.obj["app"]
+def standalone_vcmi(
+    ctx, homm_data_path: str, repository: str, tag: str, display: int, xauth_dir: str
+):
+    app = StandaloneVCMI(
+        homm_data_path=homm_data_path,
+        repository=repository,
+        tag=tag,
+        display=display,
+        xauth_dir=xauth_dir,
+    )
     app.run_standalone_vcmi()
 
 

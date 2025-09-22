@@ -1,24 +1,29 @@
 from pydantic_ai import Agent
-from pydantic_ai.models.anthropic import AnthropicModel
 import pydantic_core
 
 from disk_cache import DiskCache
 from logger import logger
 from models import (
-    MapSize,
     MapTemplate,
     ModelResponseUnion,
 )
+from templates import Templates
+from config import Config
 
 
 class AI:
-    def __init__(self, cache: DiskCache) -> None:
-        self.model = AnthropicModel("claude-sonnet-4-20250514")
-        self.agent = Agent(self.model, output_type=ModelResponseUnion)
+    def __init__(self, cache: DiskCache, templates: Templates, config: Config) -> None:
+        self.config = config
+        self.agent = Agent(
+            self.config.llm_model,
+            output_type=ModelResponseUnion,
+            retries=self.config.llm_retries,
+        )
         self.cache = cache
+        self.templates = templates
 
-    def start(self, seed: int) -> MapTemplate:
-        prompt = self.get_initial_prompt(seed)
+    def start(self) -> MapTemplate:
+        prompt = self.templates.get_initial_prompt()
         return self.__ask(prompt)
 
     def __ask(self, prompt: str) -> MapTemplate:
@@ -46,20 +51,3 @@ class AI:
         )
         logger.debug("Saved to cache")
         return result
-
-    def get_initial_prompt(self, seed: int):
-        map_size = MapSize.S
-        players: int = 2
-        prompt = f"""
-Your high level goal is to generate a heroes of might and magic 3 map.
-For this initial prompt respond with "MapTemplate".
-Come up with a comprehensive map scenario, design the players starting zones, progression zones and end-game zones.
-Fill in the map with as many zones as possible.
-Design different maps for different seeds.
-Requirement:
-    - Map size: {map_size}
-    - players: {players}
-    - seed: {seed}
-"""
-        logger.debug(f"Prompt {prompt}")
-        return prompt

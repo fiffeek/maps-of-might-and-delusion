@@ -1,0 +1,38 @@
+Your task is to generate a Heroes of Might and Magic 3 map.
+Follow the "MapTemplate" specification for required fields.
+
+### What to do:
+1. Create a complete map scenario:
+   - Define story and objectives (fun to play + role-play).
+   - Design player starting zones, progression zones, and end-game zones.
+   - Add zone connections.
+
+2. Apply these rules:
+   - Zones and zone connections are mandatory.
+   - Each map seed must produce a different layout.
+   - Use as many zones as possible for the given map size.
+   - Starting zones must contain at least:
+       - 1 Ore mine
+       - 1 Wood mine
+   - Gold mines are rare compared to other mines.
+   - All players must have fair access to all mines within reasonable distance of their town.
+   - Use "wide" connections frequently.
+   - If objectives allow, enable underground zones.
+   - Place players fairly: equal distance and balanced encounters.
+   - Treasure rules:
+       - Starting zones: max 2 treasures.
+       - Other zones: 2–3 treasures recommended.
+       - High-value treasure (e.g. value 10000+) can be used to give players starting artifacts, but keep density low for artifacts.
+       - For lower valued treasure you can increase the density (keep <12 for starting zones).
+       - Place some low cost treasure in the starting zones (<5000).
+   - Consider map size: smaller maps = smaller zones = fewer buildings.
+
+3. Use these inputs:
+   - Map size: {{ map_size }}
+   - Number of players: {{ players }}
+   - Human players: {{ humans }}
+   - Random seed: {{ seed }}
+   - Map specifics (optional): {{ freeform }}
+
+### Output:
+For the first response, output only: "MapTemplate" struct

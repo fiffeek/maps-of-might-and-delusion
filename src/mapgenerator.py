@@ -3,25 +3,27 @@ import os
 from typing import List
 from ai import AI
 
-from file import ensure_dir_exists, write_file
+from config import Config
+from file import write_file
 from logger import logger
 from models import MapTemplate, MapTemplatesWrapper, VCMITemplatesMod
 
 
 class MapGenerator:
-    def __init__(self, ai: AI) -> None:
+    def __init__(self, ai: AI, config: Config) -> None:
         self.ai = ai
+        self.config = config
 
-    def generate(self, seed: int, save_directory: str):
-        map_template = self.ai.start(seed=seed)
+    def generate(self):
+        map_template = self.ai.start()
         map_template_json = map_template.model_dump_json(
             indent=2, exclude_none=True, by_alias=True
         )
         logger.debug(map_template_json)
-        self.save_template(map_template, save_directory)
+        self.save_template(map_template)
 
-    def save_template(self, map_template: MapTemplate, save_directory: str):
-        file = f"{save_directory}/content/{map_template.id}.JSON"
+    def save_template(self, map_template: MapTemplate):
+        file = f"{self.config.save_path}/content/{map_template.id}.JSON"
         logger.debug(f"Saving to file {file}")
         wrapper = MapTemplatesWrapper.new(templates=[map_template])
         map_template_dict = wrapper.model_dump(
@@ -37,11 +39,10 @@ class MapGenerator:
         logger.debug(f"Writing {map_template_json} to file.")
         write_file(file, map_template_json)
         files = [os.path.basename(file) for file in os.listdir(os.path.dirname(file))]
-        self.save_mod(save_directory, files)
+        self.save_mod(files)
 
-    def save_mod(self, save_directory: str, files: List[str]):
-        ensure_dir_exists(save_directory)
-        mod_file = f"{save_directory}/mod.json"
+    def save_mod(self, files: List[str]):
+        mod_file = f"{self.config.save_path}/mod.json"
         write_file(
             mod_file,
             VCMITemplatesMod.new(files).model_dump_json(

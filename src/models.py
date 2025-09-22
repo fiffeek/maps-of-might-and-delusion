@@ -51,10 +51,21 @@ class MonsterStrength(str, Enum):
 
 
 class TownInfo(BaseModel):
-    castles: Optional[int] = Field(default=None, description="TODO")
-    towns: Optional[int] = Field(default=None, description="TODO")
-    townDensity: Optional[int] = Field(default=None, description="TODO")
-    castleDensity: Optional[int] = Field(default=None, description="TODO")
+    castles: Optional[int] = Field(
+        default=None,
+        description="Number of castles (fortified towns) to generate in this zone",
+    )
+    towns: Optional[int] = Field(
+        default=None, description="Number of regular towns to generate in this zone"
+    )
+    townDensity: Optional[int] = Field(
+        default=None,
+        description="Density of towns per zone size unit (higher = more towns), prefer towns",
+    )
+    castleDensity: Optional[int] = Field(
+        default=None,
+        description="Density of castles per zone size unit (higher = more castles), prefer castles",
+    )
 
 
 class Mines(BaseModel):
@@ -82,9 +93,17 @@ class Mines(BaseModel):
 
 
 class Treasure(BaseModel):
-    min: int = Field(..., ge=0, description="TODO")
-    max: int = Field(..., ge=0, description="TODO")
-    density: int = Field(..., ge=1, description="TODO")
+    min: int = Field(
+        ...,
+        ge=500,
+        description="Minimal amount of gold earned, should be divisible by 500",
+    )
+    max: int = Field(
+        ...,
+        ge=500,
+        description="Maximal amount of gold earned, should be divisible by 500",
+    )
+    density: int = Field(..., ge=1, description="The density of the gold", le=20)
 
 
 class TerrainType(str, Enum):
@@ -225,7 +244,6 @@ class PlayerCount(BaseModel):
 
 
 class WaterContent(str, Enum):
-    RANDOM = "random"
     NONE = "none"
     NORMAL = "normal"
     ISLANDS = "islands"
@@ -249,7 +267,7 @@ class Connection(BaseModel):
     b: str = Field(..., description="Second zone that the connection will be made to.")
     connection_type: Optional[ConnectionType] = Field(
         default=None,
-        description="When skipped GUARDED will be used.",
+        description="When skipped GUARDED will be used. You can use repulsive and fictive to esure the zones are placed in/not proximity of one another.",
         alias="type",
     )
     guard: Optional[int] = Field(
@@ -291,8 +309,8 @@ class MapTemplate(BaseModel):
         ..., description="List of connections between the zones."
     )
     allowed_water_content: Optional[List[WaterContent]] = Field(
-        ...,
-        description="Optional parameter allowing to prohibit some water modes. All modes are allowed if parameter is not specified",
+        default=None,
+        description="Optional parameter allowing to prohibit some water modes. All modes are allowed if parameter is not specified. If specified ensure that 'None' is in the list.",
         alias="allowedWaterContent",
     )
 

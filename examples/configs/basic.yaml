@@ -1,0 +1,12 @@
+---
+llm_seed: 43
+players: 4
+humans: 4
+map_size: m
+freeform: |
+    - at least one human player has to play CASTLE town
+    - the players starting zones need to have WEAK monsters
+    - place a choke point in the middle of the map, this zone should be the biggest with the most treasure
+    - the choke point should be guarded
+    - no underground
+    - place the player in the maximum distance between one another
