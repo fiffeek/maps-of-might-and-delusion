@@ -1,5 +1,6 @@
 import click
 from app import Application
+from file import os_expand
 from logger import setup_logging
 
 
@@ -57,10 +58,16 @@ def main(
     help="A seed for map generation",
     default=1,
 )
+@click.option(
+    "--save-directory",
+    help="Where to save the generated mod with templates",
+    default="$HOME/.local/share/vcmi/Mods/momd/",
+)
 @click.pass_context
-def generate(ctx, seed: int):
+def generate(ctx, seed: int, save_directory: str):
+    save_directory = os_expand(save_directory)
     app: Application = ctx.obj["app"]
-    app.generate_map(seed)
+    app.generate_map(seed, save_directory)
 
 
 @main.command()

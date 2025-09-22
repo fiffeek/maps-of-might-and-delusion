@@ -34,8 +34,8 @@ class Application:
         self.gui_controller = GUIController(self.vcmi)
         self.map_generator = MapGenerator(ai=self.ai)
 
-    def generate_map(self, seed: int):
-        self.map_generator.generate(seed)
+    def generate_map(self, seed: int, save_directory: str):
+        self.map_generator.generate(seed, save_directory)
 
     def run_standalone_vcmi(self):
         with self.gui_controller as gui_controller:

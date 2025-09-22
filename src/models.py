@@ -39,16 +39,15 @@ class ZoneType(str, Enum):
     # "treasure" - Generic neutral zone
     TREASURE = "treasure"
     JUNCTION = "junction"
-    WATER = "water"
     # "sealed" - Decorative impassable zone completely filled with obstacles
     SEALED = "sealed"
 
 
 class MonsterStrength(str, Enum):
-    NONE = "none"
     WEAK = "weak"
+    NORMAL = "normal"
     STRONG = "strong"
-    RANDOM = "random"
+    NONE = "none"
 
 
 class TownInfo(BaseModel):
@@ -59,13 +58,27 @@ class TownInfo(BaseModel):
 
 
 class Mines(BaseModel):
-    gold: int = Field(..., description="The number of gold mines in the zone.")
-    wood: int = Field(..., description="The number of wood mines in the zone.")
-    ore: int = Field(..., description="The number of ore mines in the zone.")
-    mercury: int = Field(..., description="The number of mercury mines in the zone.")
-    sulfur: int = Field(..., description="The number of sulfur mines in the zone.")
-    crystal: int = Field(..., description="The number of crystal mines in the zone.")
-    gems: int = Field(..., description="The number of gems mines in the zone.")
+    gold: Optional[int] = Field(
+        default=None, description="The number of gold mines in the zone."
+    )
+    wood: Optional[int] = Field(
+        default=None, description="The number of wood mines in the zone."
+    )
+    ore: Optional[int] = Field(
+        default=None, description="The number of ore mines in the zone."
+    )
+    mercury: Optional[int] = Field(
+        default=None, description="The number of mercury mines in the zone."
+    )
+    sulfur: Optional[int] = Field(
+        default=None, description="The number of sulfur mines in the zone."
+    )
+    crystal: Optional[int] = Field(
+        default=None, description="The number of crystal mines in the zone."
+    )
+    gems: Optional[int] = Field(
+        default=None, description="The number of gems mines in the zone."
+    )
 
 
 class Treasure(BaseModel):
@@ -90,7 +103,7 @@ class TerrainType(str, Enum):
 class ZoneOptions(BaseModel):
     id: int = Field(
         ...,
-        description="The id of the zone, the number ids the element in the array, index starts at 0.",
+        description="The id of the zone, the number ids the element in the array, index starts at 1.",
     )
     zone_type: ZoneType = Field(description="The type of the zone.", alias="type")
     size: int = Field(..., description="Relative size of the zone.", ge=1)
@@ -219,7 +232,6 @@ class WaterContent(str, Enum):
 
 
 class ConnectionType(str, Enum):
-    GUARDED = "guarded"
     WIDE = "wide"
     FICTIVE = "fictive"
     REPULSIVE = "repulsive"
@@ -240,8 +252,14 @@ class Connection(BaseModel):
         description="When skipped GUARDED will be used.",
         alias="type",
     )
-    guard: Optional[int] = Field(default=None, description="TODO")
-    road: Optional[ConnectionRoadType] = Field(default=None, description="TODO")
+    guard: Optional[int] = Field(
+        default=None,
+        description="Should be set if the connection_type is empty as that indicates GUARDED.",
+    )
+    road: Optional[ConnectionRoadType] = Field(
+        default=None,
+        description="Whether to include roads as the connection, should be set at least when connection_type is empty.",
+    )
 
 
 class MapTemplate(BaseModel):
@@ -250,7 +268,6 @@ class MapTemplate(BaseModel):
     )
 
     id: str = Field(..., description="The id of the template")
-    title: str = Field(..., description="The title of the template.")
     description: str = Field(..., description="The description of the template.")
     min_size: RealMapSize = Field(
         ...,
@@ -278,6 +295,39 @@ class MapTemplate(BaseModel):
         description="Optional parameter allowing to prohibit some water modes. All modes are allowed if parameter is not specified",
         alias="allowedWaterContent",
     )
+
+
+class VCMITemplatesMod(BaseModel):
+    name: str = Field(default="MoMD template pack")
+    description: str = Field(default="Template pack for LLM generated templates")
+    depends: List[str] = Field(default=[])
+    changelog: Dict[str, List[str]] = Field(default={})
+    keep_disabled: bool = Field(default=False, alias="keepDisabled")
+    compatibility: Dict[str, str] = Field(default={"min": "1.5.6"})
+    author: str = Field(default="momd")
+    version: str = Field(default="1.0")
+    mod_type: str = Field(alias="modType", default="Templates")
+    templates: List[str]
+    contact: str = Field(default="filipmikina@gmail.com")
+
+    @staticmethod
+    def new(templates: List[str]) -> "VCMITemplatesMod":
+        return VCMITemplatesMod(templates=templates)
+
+
+class MapTemplatesWrapper(BaseModel):
+    templates: Dict[str, MapTemplate]
+
+    @staticmethod
+    def new(templates: List[MapTemplate]) -> "MapTemplatesWrapper":
+        templs = {}
+        for template in templates:
+            templs[template.id] = template
+        return MapTemplatesWrapper(templates=templs)
+
+    @model_serializer()
+    def _serialize(self, _info):
+        return self.templates
 
 
 ModelResponseUnion = Union[MapTemplate]

@@ -9,3 +9,10 @@ def os_expand(path: str) -> str:
 
 def ensure_dir_exists(path: str):
     os.makedirs(path, exist_ok=True)
+
+
+def write_file(path: str, content: str):
+    path = os_expand(path)
+    ensure_dir_exists(os.path.dirname(path))
+    with open(path, "w+") as f:
+        f.write(content)
