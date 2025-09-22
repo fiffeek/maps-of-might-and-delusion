@@ -95,13 +95,13 @@ class Mines(BaseModel):
 class Treasure(BaseModel):
     min: int = Field(
         ...,
-        ge=500,
-        description="Minimal amount of gold earned, should be divisible by 500",
+        ge=300,
+        description="Minimal amount of said treasure, should be divisible by 50",
     )
     max: int = Field(
         ...,
         ge=500,
-        description="Maximal amount of gold earned, should be divisible by 500",
+        description="Maximal amount of said treasure, should be divisible by 50. Should be more than the min.",
     )
     density: int = Field(..., ge=1, description="The density of the gold", le=20)
 
@@ -117,6 +117,75 @@ class TerrainType(str, Enum):
     LAVA = "lava"
     WATER = "water"
     ROCK = "rock"
+
+
+class CustomObjectCategory(str, Enum):
+    ALL = "all"
+    NONE = "none"
+    CREATURE_BANK = "creatureBank"
+    BONUS = "bonus"
+    DWELLING = "dwelling"
+    RESOURCE = "resource"
+    RESOURCE_GENERATOR = "resourceGenerator"
+    SPELL_SCROLL = "spellScroll"
+    RANDOM_ARTIFACT = "randomArtifact"
+    PANDORAS_BOX = "pandorasBox"
+    QUEST_ARTIFACT = "questArtifact"
+    SEER_HUT = "seerHut"
+    OTHER = "other"
+
+
+class CommonObjectType(str, Enum):
+    LEARNING_STONE = "core:object.learningStone"
+    TREASURE_CHEST = "core:object.treasureChest"
+    CAMPFIRE = "core:object.campfire"
+    ARENA = "core:object.arena"
+    SCHOOL_OF_WAR = "core:object.schoolOfWar"
+    SCHOOL_OF_MAGIC = "core:object.schoolOfMagic"
+    GOLD = "core:object.resource.gold"
+    RANDOM_ARTIFACT_MINOR = "core:object.randomArtifactMinor"
+    RANDOM_ARTIFACT_MAJOR = "core:object.randomArtifactMajor"
+    SHRINE_OF_MAGIC_1 = "core:object.shrineOfMagicLevel1"
+    SHRINE_OF_MAGIC_2 = "core:object.shrineOfMagicLevel2"
+    SHRINE_OF_MAGIC_3 = "core:object.shrineOfMagicLevel3"
+    PANDORAS_BOX = "core:object.pandoraBox"
+    TOWN_GATE = "hota.mapobjects:object.townGate.townGate"
+    PRISON = "core:object.prison.prison"
+    WITCH_HUT = "core:object.witchHut.witchHut"
+    WAR_MACHINE_FACTORY = "core:object.warMachineFactory"
+    RANDOM_DWELLING = "core:object.randomDwelling"
+    RANDOM_MONSTER_LEVEL_7 = "core:object.randomMonsterLevel7"
+
+
+class CommonObjectRMGSpec(BaseModel):
+    zone_limit: Optional[int] = Field(
+        description="This is the max of items of such spec that will be placed in the zone. When not present = unlimited.",
+        default=None,
+    )
+    value: int = Field(
+        description="The value of this object counting towards the treasure points."
+    )
+    rarity: int = Field(
+        description="How rare should this object be? Should be divisible by 10. The higher the value the more rare the object is."
+    )
+
+
+class CommonObject(BaseModel):
+    id: CommonObjectType = Field(description="The unique identifier of the object.")
+    rmg: CommonObjectRMGSpec = Field(
+        description="The scoring of the object that will be used for calculating treasure points."
+    )
+
+
+class CustomObjects(BaseModel):
+    banned_categories: Optional[List[CustomObjectCategory]] = Field(
+        default=None,
+        description="All of objects of this kind will be removed from zone",
+    )
+    commonObjects: Optional[List[CommonObject]] = Field(
+        default=None,
+        description="Configure individual common objects, even if a category is banned but the object from this category is present here it can be spawned.",
+    )
 
 
 class ZoneOptions(BaseModel):
@@ -167,7 +236,17 @@ class ZoneOptions(BaseModel):
         default=None, description="Specifies the mines numbers in the zone."
     )
     treasures: List[Treasure] = Field(
-        ..., description="Specifies the treasure in the zone.", alias="treasure"
+        ...,
+        description="Specifies the treasure (such as chests, artifacts, dwellings and other buildings) in the zone. See also custom_objects.",
+        alias="treasure",
+    )
+    custom_objects: Optional[CustomObjects] = Field(
+        alias="customObjects",
+        description="Objects with different configuration than default / set by mods, count towards the treasure scoring. Useful in ensuring a correct resources would be spawned inside a given zone.",
+    )
+    custom_objects_like_zone: Optional[int] = Field(
+        alias="customObjectsLikeZone",
+        description="Custom objects will have same configuration as in linked zone. Exclusive with custom_objects. Allows for less repetition.",
     )
 
 

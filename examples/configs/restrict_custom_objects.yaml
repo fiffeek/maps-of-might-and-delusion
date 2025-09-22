@@ -1,0 +1,8 @@
+---
+llm_seed: 44
+players: 4
+humans: 4
+map_size: m
+freeform: |
+    - ban pandora box
+    - do not request any custom objects for treasure, rely on defaults
