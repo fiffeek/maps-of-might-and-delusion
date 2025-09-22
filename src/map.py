@@ -311,13 +311,16 @@ class ObjectsGrid(BaseModel):
 
     def place_town(self, zone: Zone, town: Town):
         logger.debug(f"Will try to place the town {town} at {zone.location}")
-        at = self.find_free_space_for_level(zone, town.at, town.town_type.dimensions)
+        # find a place with one row higher to ensure there is a place for the player to get to the town
+        dimensions = (town.town_type.dimensions[0], town.town_type.dimensions[1] + 1)
+        at = self.find_free_space_for_level(zone, town.at, dimensions)
         if at is None:
             logger.warning(f"cant place building {town} anywhere for {zone.location}")
             return
 
-        town.at = at
-        return self.__place_town(town, zone.location)
+        # offset back
+        town.at = Point(kind="point", x=at.x, y=at.y - 1)
+        self.__place_town(town, zone.location)
 
     def find_free_near_water(
         self, location: Location, at: Point, dimensions, tiles: Grid
@@ -384,6 +387,8 @@ class ObjectsGrid(BaseModel):
     def __place_town(self, town: Town, location: Location):
         self.towns[town.at.x][town.at.y][location] = town
         self.__mark_present(town.at, town.town_type.dimensions, location)
+        for x, y in town.reserved_tiles():
+            self.placeable[x][y][location] = False
 
     def __place_obstacle(self, obstacle: Obstacle, location: Location):
         self.obstacles[obstacle.starting_point.x][obstacle.starting_point.y][
@@ -395,6 +400,8 @@ class ObjectsGrid(BaseModel):
     def __place_building(self, building: Building, location: Location):
         self.buildings[building.at.x][building.at.y][location] = building
         self.__mark_present(building.at, building.building_type.dimensions, location)
+        for x, y in building.reserved_tiles():
+            self.placeable[x][y][location] = False
 
     def __mark_present(
         self, at: Point, dimensions: Tuple[int, int], location: Location
@@ -550,7 +557,6 @@ class MapRepresentation(BaseModel):
                     grid_present=self.terrain.grid_present, location=zone.location
                 ):
                     self.terrain.set_river(x, y, zone.location, river.river_type)
-                    self.objects.set_unplaceable(x, y, zone.location)
             logger.debug("Zone created")
 
     def place_obstacles(self) -> None:

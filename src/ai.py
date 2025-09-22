@@ -1,5 +1,3 @@
-from typing import Optional
-from pydantic import TypeAdapter
 from pydantic_ai import Agent
 from pydantic_ai.models.anthropic import AnthropicModel
 import pydantic_core
@@ -7,10 +5,8 @@ import pydantic_core
 from disk_cache import DiskCache
 from logger import logger
 from models import (
-    CodeResponse,
     CreateMapRequest,
     MapSize,
-    ModelResponse,
     ModelResponseUnion,
     get_map_dimensions,
 )
@@ -19,6 +15,7 @@ from models import (
 class AI:
     def __init__(self, cache: DiskCache) -> None:
         self.model = AnthropicModel("claude-sonnet-4-20250514")
+        # self.model = OpenAIChatModel("gpt-5-2025-08-07")
         self.agent = Agent(self.model, output_type=ModelResponseUnion)
         self.cache = cache
 
@@ -45,39 +42,11 @@ class AI:
         logger.debug("Saved to cache")
         return result
 
-    def get_action(self, code_response: Optional[CodeResponse]) -> ModelResponse:
-        prompt = self.get_continuation_prompt(code_response)
-        logger.debug(f"Responding to agent with {prompt}")
-        result = self.agent.run_sync(prompt)
-        ta = TypeAdapter(ModelResponse)
-        model = ta.validate_python(result.output)
-        logger.debug(
-            f"AI responded with: {model.model_dump_json()}, usage: {result.usage()}"
-        )
-        return model
-
-    def get_continuation_prompt(self, code_response: Optional[CodeResponse]) -> str:
-        lines = []
-        if code_response:
-            lines.extend(
-                [
-                    f"Response to your previous action: {code_response.model_dump_json()}",
-                    f"Expected next action: {code_response.next_action}",
-                ]
-            )
-        lines.extend(
-            [
-                "If there is an error, please correct it, if not let's continue with the generation.",
-            ]
-        )
-        return "\n".join(lines)
-
     def get_initial_prompt(self, seed: int):
         map_size = MapSize.S
         players: int = 2
         prompt = f"""
 Your high level goal is to generate a heroes of might and magic 3 map.
-We will do it collaboratevely, you should always respond to me with one of the actions from the output specification.
 For this initial prompt respond with "CreateMapRequest".
 
 To accomplish this:
@@ -122,6 +91,7 @@ Requirements:
     28. Rivers cant be placed on water. They should be placed inland.
     29. Do not put small lakes or small puddles of water inside the land.
     30. Roads and rivers path points should exists within the boundaries of the zone.
+    31. Design starting zones, mid level progression zones, and late game PvP zones.
 Constraints:
     1. Anything left out from the zones will be "water" on the surface and "rock" underground.
 Hints:

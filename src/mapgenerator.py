@@ -94,7 +94,9 @@ class MapGenerator:
                             surface_terrain[index] = H3MTerrain.from_model(terrain)
                         else:
                             underground_terrain[index] = H3MTerrain.from_model(terrain)
+            logger.debug("Setting surface terrain")
             h3m.set_terrain_all(Location.SURFACE.to_level(), surface_terrain)
+            logger.debug("Setting underground terrain")
             if map.has_underground:
                 h3m.set_terrain_all(
                     Location.UNDERGROUND.to_level(), underground_terrain
@@ -106,6 +108,7 @@ class MapGenerator:
             underground_roads: List[H3MRoadType] = [H3MRoadType.NONE] * (
                 map_size * map_size
             )
+            logger.debug("Looking for roads")
             for x, row in map.terrain.roads.items():
                 for y, column in row.items():
                     for location, road_type in column.items():
@@ -123,6 +126,7 @@ class MapGenerator:
             underground_rivers: List[H3MRiverType] = [H3MRiverType.NONE] * (
                 map_size * map_size
             )
+            logger.debug("Looking for rivers")
             for x, row in map.terrain.rivers.items():
                 for y, column in row.items():
                     for location, river_type in column.items():
@@ -135,6 +139,8 @@ class MapGenerator:
                                 river_type
                             )
                             continue
+
+            logger.debug("Generating surface tiles")
             h3m.generate_tiles(
                 map_size,
                 Location.SURFACE.to_level(),
@@ -143,6 +149,7 @@ class MapGenerator:
                 river_types=surface_rivers,
             )
             if map.has_underground:
+                logger.debug("Generating underground tiles")
                 h3m.generate_tiles(
                     map_size,
                     Location.UNDERGROUND.to_level(),
@@ -151,6 +158,7 @@ class MapGenerator:
                     river_types=underground_rivers,
                 )
 
+            logger.debug("Setting obstacles")
             for x, row in map.objects.obstacles.items():
                 for y, column in row.items():
                     for location, obstacle in column.items():

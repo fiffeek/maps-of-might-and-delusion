@@ -439,6 +439,14 @@ class Building(BaseModel):
         description="Optionally an owner of the building, has to be < the expected number of players.",
     )
 
+    def reserved_tiles(self) -> List[Tuple[int, int]]:
+        mapper = {
+            BuildingType.SUBTERRANEAN_GATE: [(self.at.x - 1, self.at.y + 1)],
+        }
+        if self.building_type in mapper:
+            return mapper[self.building_type]
+        return []
+
     def __eq__(self, other):
         if other.__class__ is self.__class__:
             return self.model_dump_json() == other.model_dump_json()
@@ -465,6 +473,9 @@ class Town(BaseModel):
         The entrance for the sprite is in the "middle" of the town.
         """
         return (self.at.x - 2, self.at.y)
+
+    def reserved_tiles(self) -> List[Tuple[int, int]]:
+        return [(self.at.x - 2, self.at.y + 1)]
 
 
 class RoadType(str, Enum):
@@ -588,35 +599,12 @@ class CreateMapRequest(BaseModel):
     )
 
 
-class Finish(BaseModel):
-    kind: Literal["finish"] = Field(
-        "finish", description="Discriminator for model response union."
-    )
-
-
 def make_str_str_dict() -> Dict[str, str]:
     return dict()
 
 
 def make_str_list() -> List[str]:
     return list()
-
-
-class CodeResponse(BaseModel):
-    ok: bool = Field(
-        default=True, description="Returns if the operation was successful."
-    )
-    errors: List[str] = Field(
-        default_factory=make_str_list,
-        description="Returns the errors if the operation was unsuccessful.",
-    )
-    metadata: Dict[str, str] = Field(
-        default_factory=make_str_str_dict,
-        description="Structured metadata, might be empty.",
-    )
-    next_action: str = Field(
-        default="finish", description="Next action expected from the model."
-    )
 
 
 ADJACENT = (
@@ -631,5 +619,5 @@ ADJACENT = (
 )
 
 
-ModelResponseUnion = Union[CreateMapRequest, Finish]
+ModelResponseUnion = Union[CreateMapRequest]
 ModelResponse = Annotated[ModelResponseUnion, Field(discriminator="kind")]
