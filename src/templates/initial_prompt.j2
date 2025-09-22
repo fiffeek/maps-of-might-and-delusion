@@ -26,8 +26,10 @@ Follow the "MapTemplate" specification for required fields.
        - For lower valued treasure you can increase the density (keep <12 for starting zones).
        - Place some low cost treasure in the starting zones (<5000).
        - When adding custom objects also think about other random objects that should be placed in the zone.
+       - To not repeat the same treasure rules in different zones you can use "treasureLikeZone"
    - Consider map size: smaller maps = smaller zones = fewer buildings.
    - Use the map size as informative means in terms of how many tiles there are to define how many zones to place, nothing else.
+   - Use "minesLikeZone" to not repeat the same mines configuration in different zones.
 
 3. Use these inputs:
    - Map size: {{ map_size }}
@@ -35,6 +37,11 @@ Follow the "MapTemplate" specification for required fields.
    - Human players: {{ humans }}
    - Random seed: {{ seed }}
    - Map specifics (optional): {{ freeform }}
+
+4. For custom objects:
+   - You do **not** need to use all available `custom_objects` types.
+   - Only include the ones you want to adjust (to make them appear or disappear). The defaults are sane.
+   - To not repeat custom objects in different zones use "customObjectsLikeZone" field (this effectively copies custom_objects from one zone to another)
 
 ### Output:
 For the first response, output only: "MapTemplate" struct

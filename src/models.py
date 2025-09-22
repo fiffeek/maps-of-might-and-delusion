@@ -233,10 +233,20 @@ class ZoneOptions(BaseModel):
     mines: Optional[Mines] = Field(
         default=None, description="Specifies the mines numbers in the zone."
     )
-    treasures: List[Treasure] = Field(
-        ...,
+    mines_like_zone: Optional[int] = Field(
+        alias="minesLikeZone",
+        default=None,
+        description="Mines will have same configuration as in linked zone, can be used to not repeat the same mines in different zones.",
+    )
+    treasures: Optional[List[Treasure]] = Field(
+        default=None,
         description="Specifies the treasure (such as chests, artifacts, dwellings and other buildings) in the zone. See also custom_objects.",
         alias="treasure",
+    )
+    treasure_like_zone: Optional[int] = Field(
+        alias="treasureLikeZone",
+        default=None,
+        description="Treasures will have same configuration as in linked zone, can be used to not repeat the same treasure in different zones.",
     )
     custom_objects: Optional[CustomObjects] = Field(
         alias="customObjects",
