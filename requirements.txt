@@ -334,7 +334,10 @@ numpy==2.2.6 \
     --hash=sha256:fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249 \
     --hash=sha256:fe27749d33bb772c80dcd84ae7e8df2adc920ae8297400dabec45f0dedb3f6de \
     --hash=sha256:fee4236c876c4e8369388054d02d0e9bb84821feb1a64dd59e137e6511a551f8
-    # via opencv-python
+    # via
+    #   ai-of-might-and-delusion
+    #   opencv-python
+    #   opensimplex
 omegaconf==2.3.0 \
     --hash=sha256:7b4df175cdb08ba400f45cae3bdcae7ba8365db4d165fc65fd04b050ab63b46b \
     --hash=sha256:d5d4b6d29955cc50ad50c46dc269bcd92c6e00f5f90d23ab5fee7bfca4ba4cc7
@@ -351,6 +354,10 @@ opencv-python==4.12.0.88 \
     --hash=sha256:d98edb20aa932fd8ebd276a72627dad9dc097695b3d435a4257557bbb49a79d2 \
     --hash=sha256:f9a1f08883257b95a5764bf517a32d75aec325319c8ed0f89739a57fae9e92a5 \
     --hash=sha256:ff554d3f725b39878ac6a2e1fa232ec509c36130927afc18a1719ebf4fbf4357
+    # via ai-of-might-and-delusion
+opensimplex==0.4.5.1 \
+    --hash=sha256:876514ffafd647d3149d662701e42f687560f01fbdd18a731ea8a35b476d3109 \
+    --hash=sha256:881163ba74b443c1498d43b4e6567635a57171e43174db1e41901580b859145d
     # via ai-of-might-and-delusion
 opentelemetry-api==1.37.0 \
     --hash=sha256:540735b120355bd5112738ea53621f8d5edb35ebcd6fe21ada3ab1c61d1cd9a7 \

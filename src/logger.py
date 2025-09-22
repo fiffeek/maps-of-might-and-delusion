@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger("aiomad")
+logger = logging.getLogger("momd")
 
 
 def setup_logging(debug: bool = False) -> None:
