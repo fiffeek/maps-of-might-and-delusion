@@ -4,13 +4,11 @@ players: 8
 humans: 4
 map_size: l
 freeform: |
-    - at least one human player has to play CASTLE town
     - place a choke point in the middle of the map, this zone should be the biggest with the most treasure
     - the choke point should be guarded
     - place the player in the maximum distance between one another
     - no teleporters on surface
     - give players more mines in starting zones
-    - use wide connections more often
-    - enable underground
+    - no underground
     - underground serves as shortcuts to some areas
     - additionally there is big treasure in the underground but it is a portal maze

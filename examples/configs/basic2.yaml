@@ -1,0 +1,21 @@
+---
+llm_seed: 44
+players: 8
+humans: 4
+map_size: l
+freeform: |
+    - ensure you place a seer hut (but not in player starting zones)
+    - no pandora box in any zone but the main treasure
+    - throw in more treasure at all levels for faster gameplay
+    - make the starting zones smaller, but add more treasure to them
+    - enable underground
+    - underground creates shortcuts
+    - there is a bunch of bigger treasure zones that players will fight over
+    - neutral zones with towns must be guarded
+    - throw a zone similar to the players town flavor next to them
+    - add more neutral towns in the intermediate zones
+    - add more treasure in the junction zones
+    - the surface should host 4 players, in all the corners of the map
+    - underground 4 players too, same idea
+    - there should be a main hub treasure zone on the surface and in the underground, it should be super big
+    - the main hubs in the underground and on the surface should be linked

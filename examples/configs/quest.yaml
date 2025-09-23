@@ -1,0 +1,8 @@
+---
+llm_seed: 46
+players: 2
+humans: 2
+map_size: s
+freeform: |
+    - place a seer hut in players starting areas
+    - add more treasure in each zone

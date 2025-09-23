@@ -1,0 +1,15 @@
+---
+llm_seed: 46
+players: 8
+humans: 4
+map_size: l
+freeform: |
+    - place the player in the maximum distance between one another
+    - no underground
+    - give players more treasure in the starting zones
+    - the intermediate zones should have more mines (not gold)
+    - neutral towns should be contested by multiple players
+    - ban creature banks in the starting zones
+    - no pandoras box in starting zones
+    - do not place arenas in the starting zones
+    - do not use junction connections, prefer treasure or wide

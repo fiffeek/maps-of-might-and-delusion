@@ -19,8 +19,8 @@ Follow the "MapTemplate" specification for required fields.
    - If objectives allow, enable underground zones.
    - Place players fairly: equal distance and balanced encounters.
    - Treasure rules:
-       - Starting zones: max 3 treasures.
-       - Other zones: 2–3 treasures recommended, can be more.
+       - Starting zones: max 3 treasures. Use at least two different settings.
+       - Other zones: 2–3 treasures recommended, can be more. Use at least two different settings.
        - High-value treasure (e.g. value 10000+) can be used to give players starting artifacts, but keep density low for artifacts.
        - For lower valued treasure you can increase the density (keep <12 for starting zones).
        - Place some low cost treasure in the starting zones (<8000).
@@ -30,6 +30,8 @@ Follow the "MapTemplate" specification for required fields.
    - Use the map size as informative means in terms of how many tiles there are to define how many zones to place, nothing else.
    - Use "minesLikeZone" to not repeat the same mines configuration in different zones.
    - Add some treasure in junctions too.
+   - When asked for "more treasure" add another entry to the treasure array, or/and adjust the density.
+   - Prefer "normal" mosters in the starting player zones if there is lots of resources (treasure and mines)
 
 3. Use these inputs:
    - Map size: {{ map_size }}
@@ -44,10 +46,93 @@ Follow the "MapTemplate" specification for required fields.
    - To not repeat custom objects in different zones use "customObjectsLikeZone" field (this effectively copies custom_objects from one zone to another)
    - If you want a specific object to disappear (not the entire category) just set its value to 99999.
    - If you want to limit the object numbers inside a given zone set "zoneLimit"
-   - If you want an object to absolutely appear lower it rarity to 1 and set "zoneLimit" to not spam it.
+   - If you want an object to absolutely appear increase its rarity to 200 and set "zoneLimit" to not spam it.
+   - The higher the rarity the more common the object is.
    - Use pandorasBox really scarcely.
    - When putting an object in "commonObjects" also ban it in "bannedObjects" (due to VCMI bug).
    - Limit pandorasBox to 1 in high value zones, ban elsewhere.
+
+5. Here are some examples for the treasure to get a feel of the possible values. Do not use these but look at how values and density plays a role:
+- Starting zones:
+  - Example:
+    { "min" : 10000, "max" : 15000, "density" : 1 },
+    { "min" : 3000, "max" : 6000, "density" : 6 }
+  - Example:
+    { "min" : 300, "max" : 2000, "density" : 18 },
+		{ "min" : 3000, "max" : 5000, "density" : 6 }
+  - Example:
+    { "min" : 500, "max" : 3000, "density" : 10 },
+    { "min" : 3000, "max" : 6000, "density" : 8 },
+    { "min" : 1000, "max" : 2000, "density" : 5 }
+  - Example:
+    { "min" : 400, "max" : 2000, "density" : 6 },
+    { "min" : 3500, "max" : 5000, "density" : 5 },
+    { "min" : 2100, "max" : 3000, "density" : 2 }
+  - Example:
+    { "min" : 300, "max" : 3000, "density" : 12 },
+    { "min" : 5000, "max" : 9000, "density" : 6 }
+  - Example:
+    { "min" : 12000, "max" : 22000, "density" : 1 },
+    { "min" : 5000, "max" : 16000, "density" : 6 },
+    { "min" : 400, "max" : 3000, "density" : 4 }
+  - Example:
+    { "min" : 3300, "max" : 3500, "density" : 4 },
+    { "min" : 1000, "max" : 2000, "density" : 7 },
+    { "min" : 330, "max" : 1000, "density" : 3 }
+  - Example:
+    { "min" : 14000, "max" : 18000, "density" : 1 },
+    { "min" : 5000, "max" : 7500, "density" : 3 },
+    { "min" : 340, "max" : 2000, "density" : 9 }
+  - Example:
+    { "min" : 400, "max" : 2000, "density" : 6 },
+    { "min" : 3500, "max" : 5000, "density" : 5 },
+    { "min" : 2100, "max" : 3000, "density" : 2 }
+
+- "treasure" zones:
+  - Example:
+    { "min" : 5000, "max" : 12500, "density" : 2 },
+    { "min" : 3000, "max" : 6000, "density" : 8 },
+    { "min" : 300, "max" : 2000, "density" : 12 }
+  - Example:
+    { "min" : 100, "max" : 1400, "density" : 17 },
+    { "min" : 3000, "max" : 4000, "density" : 5 }
+  - Example:
+    { "min" : 800, "max" : 4000, "density" : 8 },
+    { "min" : 5000, "max" : 8000, "density" : 12 },
+    { "min" : 10000, "max" : 15000, "density" : 5 }
+  - Example:
+    { "min" : 100, "max" : 1500, "density" : 6 },
+    { "min" : 2000, "max" : 3000, "density" : 8 },
+    { "min" : 5000, "max" : 9000, "density" : 7 }
+  - Example:
+    { "min" : 10000, "max" : 15000, "density" : 1 },
+    { "min" : 5000, "max" : 7000, "density" : 30 },
+    { "min" : 300, "max" : 3000, "density" : 5 }
+  - Example:
+    { "min" : 25000, "max" : 30000, "density" : 10 },
+    { "min" : 300, "max" : 3000, "density" : 10 }
+  - Example:
+    { "min" : 35000, "max" : 55000, "density" : 3 },
+    { "min" : 25000, "max" : 35000, "density" : 10 },
+    { "min" : 10000, "max" : 25000, "density" : 10 }
+  - Example:
+    { "min" : 5000, "max" : 7000, "density" : 8 },
+    { "min" : 1500, "max" : 2000, "density" : 2 },
+    { "min" : 330, "max" : 1500, "density" : 5 }
+  - Example:
+    { "min" : 6000, "max" : 9500, "density" : 2 },
+    { "min" : 3500, "max" : 6000, "density" : 5 },
+    { "min" : 1000, "max" : 2000, "density" : 3 }
+  - Example:
+    { "min" : 25000, "max" : 29000, "density" : 5 },
+    { "min" : 10000, "max" : 22000, "density" : 3 },
+    { "min" : 1000, "max" : 1700, "density" : 1 }
+  - Example:
+    { "min" : 15000, "max" : 20000, "density" : 1 },
+    { "min" : 10000, "max" : 15000, "density" : 6 },
+    { "min" : 3000, "max" : 6000, "density" : 9 }
+
+
 
 ### Output:
 For the first response, output only: "MapTemplate" struct

@@ -2,7 +2,7 @@
 llm_seed: 42
 players: 8
 humans: 8
-map_size: xl
+map_size: l
 freeform: |
     - the players starting zones need to have WEAK monsters
     - place a choke point in the middle of the map, this zone should be the biggest with the most treasure
@@ -11,3 +11,6 @@ freeform: |
     - the smaller mid-game zones should be guarded
     - no underground
     - place the player in the maximum distance between one another
+    - the most treasure is inside a very big treasure zone central to all the players
+    - add much more treasure and more density to the starting zones
+    - ban pandorasBox everywhere
