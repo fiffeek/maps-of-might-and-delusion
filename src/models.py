@@ -94,14 +94,16 @@ class Treasure(BaseModel):
     min: int = Field(
         ...,
         ge=300,
+        le=30000,
         description="Minimal amount of said treasure, should be divisible by 50",
     )
     max: int = Field(
         ...,
         ge=500,
+        le=30000,
         description="Maximal amount of said treasure, should be divisible by 50. Should be more than the min.",
     )
-    density: int = Field(..., ge=1, description="The density of the gold", le=20)
+    density: int = Field(..., ge=1, description="The density of the treasure", le=25)
 
 
 class TerrainType(str, Enum):
@@ -287,7 +289,8 @@ class ZoneOptions(BaseModel):
     )
     treasures: Optional[List[Treasure]] = Field(
         default=None,
-        description="Specifies the treasure (such as chests, artifacts, dwellings and other buildings) in the zone. See also custom_objects.",
+        description="Specifies the treasure (such as chests, artifacts, dwellings and other buildings) in the zone."
+        "For lower quality treasure, the density should be higher; for higher quality treasure the density should be lower. See also custom_objects.",
         alias="treasure",
     )
     treasure_like_zone: Optional[int] = Field(
