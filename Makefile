@@ -64,29 +64,5 @@ lint:
 
 pre-push: pre-commit
 
-build/vcmi/container:
-	@cd $(VCMI_DIR) && $(DOCKER_BIN) build -t vcmi:dev .
-
-debug/vcmi/container: build/vcmi/container
-	@$(DOCKER_BIN) run --rm -it \
-		-e HOMM_DATA_PATH=/mnt/homm/data \
-		--mount type=bind,src=$(HOMM_DATA_PATH),dst=/mnt/homm/data,ro \
-		--entrypoint /bin/bash vcmi:dev
-
-run/vcmi/container: build/vcmi/container
-	@$(DOCKER_BIN) run \
-		--init \
-		-e HOMM_DATA_PATH=/mnt/homm/data \
-		-e XAUTH_DIR=/mnt/xauth/data \
-		--mount type=bind,src=$(HOMM_DATA_PATH),dst=/mnt/homm/data,ro \
-		--mount type=bind,src=$(XAUTH_PATH),dst=/mnt/xauth/data \
-		-p 5901:5900 \
-		vcmi:dev
-
-run/cli/dev:
-	@$(UVX_BIN)
-
-build/h3m:
-	@$(MAKE) -C homm3tools/h3m/h3mtilespritegen/BUILD/gcc install
-	@$(MAKE) -C homm3tools/h3m/h3mlib/BUILD/gcc install
-	@cp homm3tools/OUTPUT/gcc/h3mlib.so dist/h3mlib.so
+build/container:
+	@$(DOCKER_BIN) build -t momd:dev .
