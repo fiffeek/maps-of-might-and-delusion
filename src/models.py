@@ -183,6 +183,7 @@ class CommonObjectType(str, Enum):
     CARTOGRAPHER_WATER = "core:objects.cartographer.cartographerWater"
     CARTOGRAPHER_LAND = "core:objects.cartographer.cartographerLand"
     CARTOGRAPHER_SUBTERRANEAN = "core:objects.cartographer.cartographerSubterranean"
+    SEER_HUT = "core:objects.seerHut.2"
 
 
 class CommonObjectRMGSpec(BaseModel):
@@ -194,7 +195,7 @@ class CommonObjectRMGSpec(BaseModel):
         description="The value of this object counting towards the treasure points."
     )
     rarity: int = Field(
-        description="How rare should this object be? Should be divisible by 10. The higher the value the more rare the object is."
+        description="Rarity of object, should be divisible by 5, 10 = rare, 100 = common",
     )
 
 
@@ -227,7 +228,17 @@ class ZoneOptions(BaseModel):
         ...,
         description="The id of the zone, the number ids the element in the array, index starts at 1.",
     )
-    zone_type: ZoneType = Field(description="The type of the zone.", alias="type")
+
+    zone_type: ZoneType = Field(
+        description="""The type of the zone. Explanations:
+                                - "sealed" is a decorative impassable zone, completely filled with obstacles
+                                - "treasure" is a generic neutral zone.
+                                - "junction" is a neutral zone with narrow passages only, the rest of area is filled with obstacles.
+                                - "cpuStart" is a starting zone for "CPU only" players
+                                - "playerStart" is a starting zone for a "human or CPU" players
+                                """,
+        alias="type",
+    )
     size: int = Field(..., description="Relative size of the zone.", ge=1)
     owner: Optional[int] = Field(
         default=None,
@@ -392,7 +403,12 @@ class Connection(BaseModel):
     b: str = Field(..., description="Second zone that the connection will be made to.")
     connection_type: Optional[ConnectionType] = Field(
         default=None,
-        description="When skipped GUARDED will be used. You can use repulsive and fictive to esure the zones are placed in/not proximity of one another.",
+        description="""Explanations:
+        - "wide": connections have no border, or guard
+        - "guarded": self-explanatory
+        - "fictive": virtual; attracts zones (they are closer)
+        - "repulsive": virtual; repluses zones (farther away)
+        When skipped GUARDED will be used. You can use repulsive and fictive to esure the zones are placed in/not proximity of one another.""",
         alias="type",
     )
     guard: Optional[int] = Field(
@@ -411,6 +427,7 @@ class MapTemplate(BaseModel):
     )
 
     id: str = Field(..., description="The id of the template")
+    name: str = Field(..., description="The name of the template.")
     description: str = Field(..., description="The description of the template.")
     min_size: RealMapSize = Field(
         ...,

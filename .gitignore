@@ -6,5 +6,4 @@ node_modules
 cached_responses
 __pycache__
 *screenshot*
-dist
 *.h3m
