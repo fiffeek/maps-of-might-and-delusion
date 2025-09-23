@@ -16,20 +16,20 @@ Follow the "MapTemplate" specification for required fields.
        - 1 Wood mine
    - Gold mines are rare compared to other mines.
    - All players must have fair access to all mines within reasonable distance of their town.
-   - Use "wide" connections frequently.
    - If objectives allow, enable underground zones.
    - Place players fairly: equal distance and balanced encounters.
    - Treasure rules:
-       - Starting zones: max 2 treasures.
-       - Other zones: 2–3 treasures recommended.
+       - Starting zones: max 3 treasures.
+       - Other zones: 2–3 treasures recommended, can be more.
        - High-value treasure (e.g. value 10000+) can be used to give players starting artifacts, but keep density low for artifacts.
        - For lower valued treasure you can increase the density (keep <12 for starting zones).
-       - Place some low cost treasure in the starting zones (<5000).
+       - Place some low cost treasure in the starting zones (<8000).
        - When adding custom objects also think about other random objects that should be placed in the zone.
        - To not repeat the same treasure rules in different zones you can use "treasureLikeZone"
    - Consider map size: smaller maps = smaller zones = fewer buildings.
    - Use the map size as informative means in terms of how many tiles there are to define how many zones to place, nothing else.
    - Use "minesLikeZone" to not repeat the same mines configuration in different zones.
+   - Add some treasure in junctions too.
 
 3. Use these inputs:
    - Map size: {{ map_size }}
@@ -42,6 +42,12 @@ Follow the "MapTemplate" specification for required fields.
    - You do **not** need to use all available `custom_objects` types.
    - Only include the ones you want to adjust (to make them appear or disappear). The defaults are sane.
    - To not repeat custom objects in different zones use "customObjectsLikeZone" field (this effectively copies custom_objects from one zone to another)
+   - If you want a specific object to disappear (not the entire category) just set its value to 99999.
+   - If you want to limit the object numbers inside a given zone set "zoneLimit"
+   - If you want an object to absolutely appear lower it rarity to 1 and set "zoneLimit" to not spam it.
+   - Use pandorasBox really scarcely.
+   - When putting an object in "commonObjects" also ban it in "bannedObjects" (due to VCMI bug).
+   - Limit pandorasBox to 1 in high value zones, ban elsewhere.
 
 ### Output:
 For the first response, output only: "MapTemplate" struct

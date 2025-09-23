@@ -5,3 +5,7 @@ humans: 4
 map_size: m
 freeform: |
     - go crazy with portals, generate lots of zones, make it a maze
+    - add 20 zones
+    - enable underground
+    - the ONLY allowed connection type is forcePortal
+    - add more treasure in all zones

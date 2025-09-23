@@ -134,8 +134,21 @@ class CustomObjectCategory(str, Enum):
 
 
 class CommonObjectType(str, Enum):
+    """
+    This is a subset of all objects supported by VMCI.
+    Allows the AI to do minor tweaks and completely remove or make a resource more likely to appear.
+    """
+
+    SPELL_SCROLL = "core:object.spellScroll"
+    TRADING_POST = "core:object.tradingPost"
+    BLACK_MARKET = "core:object.blackMarket"
+    UNIVERSITY = "core:object.university"
+    MAGIC_WELL = "core:object.magicWell.magicWell"
     LEARNING_STONE = "core:object.learningStone"
     TREASURE_CHEST = "core:object.treasureChest"
+    WINDMILL = "core:object.windmill"
+    WATER_WHEEL = "core:object.waterWheel"
+    RANDOM_RESOURCE = "core:object.randomResource.randomResource"
     CAMPFIRE = "core:object.campfire"
     ARENA = "core:object.arena"
     SCHOOL_OF_WAR = "core:object.schoolOfWar"
@@ -143,16 +156,33 @@ class CommonObjectType(str, Enum):
     GOLD = "core:object.resource.gold"
     RANDOM_ARTIFACT_MINOR = "core:object.randomArtifactMinor"
     RANDOM_ARTIFACT_MAJOR = "core:object.randomArtifactMajor"
+    RANDOM_ARTIFACT_TREASURE = "core:object.randomArtifactTreasure"
     SHRINE_OF_MAGIC_1 = "core:object.shrineOfMagicLevel1"
     SHRINE_OF_MAGIC_2 = "core:object.shrineOfMagicLevel2"
     SHRINE_OF_MAGIC_3 = "core:object.shrineOfMagicLevel3"
     PANDORAS_BOX = "core:object.pandoraBox"
-    TOWN_GATE = "hota.mapobjects:object.townGate.townGate"
     PRISON = "core:object.prison.prison"
     WITCH_HUT = "core:object.witchHut.witchHut"
     WAR_MACHINE_FACTORY = "core:object.warMachineFactory"
     RANDOM_DWELLING = "core:object.randomDwelling"
+    RANDOM_MONSTER_LEVEL_1 = "core:object.randomMonsterLevel1"
+    RANDOM_MONSTER_LEVEL_2 = "core:object.randomMonsterLevel2"
+    RANDOM_MONSTER_LEVEL_3 = "core:object.randomMonsterLevel3"
+    RANDOM_MONSTER_LEVEL_4 = "core:object.randomMonsterLevel4"
+    RANDOM_MONSTER_LEVEL_5 = "core:object.randomMonsterLevel5"
+    RANDOM_MONSTER_LEVEL_6 = "core:object.randomMonsterLevel6"
     RANDOM_MONSTER_LEVEL_7 = "core:object.randomMonsterLevel7"
+    REDWOOD_OBSERVATORY = "core:object.redwoodObservatory.redwoodObservatory"
+    REFUGEE_CAMP = "core:objects.refugeeCamp"
+    DEN_OF_THIEVES = "core:objects.denOfThieves"
+    HILL_FORT = "core:objects.hillFort"
+    TAVERN = "core:objects.tavern"
+    SANCTUARY = "core:objects.sanctuary"
+    GOLEM_FACTORY = "core:objects.creatureGeneratorSpecial.golemFactory"
+    ELEMENTAL_CONFLUX = "core:objects.creatureGeneratorSpecial.elementalConflux"
+    CARTOGRAPHER_WATER = "core:objects.cartographer.cartographerWater"
+    CARTOGRAPHER_LAND = "core:objects.cartographer.cartographerLand"
+    CARTOGRAPHER_SUBTERRANEAN = "core:objects.cartographer.cartographerSubterranean"
 
 
 class CommonObjectRMGSpec(BaseModel):
@@ -180,7 +210,13 @@ class CustomObjects(BaseModel):
         default=None,
         description="All of objects of this kind will be removed from zone",
     )
-    commonObjects: Optional[List[CommonObject]] = Field(
+    banned_objects: Optional[List[CommonObjectType]] = Field(
+        default=None,
+        description="Configure individual objects bans.",
+        alias="bannedObjects",
+    )
+    common_objects: Optional[List[CommonObject]] = Field(
+        alias="commonObjects",
         default=None,
         description="Configure individual common objects, even if a category is banned but the object from this category is present here it can be spawned.",
     )
@@ -211,7 +247,7 @@ class ZoneOptions(BaseModel):
         ..., description="Describes the guarding of the treasures inside the zone."
     )
     terrain_types: Optional[List[TerrainType]] = Field(
-        ...,
+        default=None,
         description="Possible terrain types. All terrains will be available if not specified.",
         alias="terrainTypes",
     )
@@ -249,11 +285,13 @@ class ZoneOptions(BaseModel):
         description="Treasures will have same configuration as in linked zone, can be used to not repeat the same treasure in different zones.",
     )
     custom_objects: Optional[CustomObjects] = Field(
+        default=None,
         alias="customObjects",
         description="Objects with different configuration than default / set by mods, count towards the treasure scoring. Useful in ensuring a correct resources would be spawned inside a given zone.",
     )
     custom_objects_like_zone: Optional[int] = Field(
         alias="customObjectsLikeZone",
+        default=None,
         description="Custom objects will have same configuration as in linked zone. Exclusive with custom_objects. Allows for less repetition.",
     )
 
