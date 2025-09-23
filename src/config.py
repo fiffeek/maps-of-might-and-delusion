@@ -12,9 +12,6 @@ class Config(BaseModel):
         default="anthropic:claude-sonnet-4-20250514",
     )
     llm_seed: int = Field(default=42, description="The generation seed for the LLM.")
-    map_seed: int = Field(
-        default=42, description="The generation seed for the map generation in VCMI."
-    )
     save_path: str = Field(
         default="$HOME/.local/share/vcmi/Mods/momd/",
         description="The path to save the generated template with mod info to.",
@@ -33,9 +30,15 @@ class Config(BaseModel):
         description="The number of retries for the LLM in case it outputs non-compliant spec.",
         default=1,
     )
+    prompt_template_overwrite: Optional[str] = Field(
+        description="An override for the prompt sent to the llm, see ./templates/initial_prompt.j2 for an example. You can use jinja variables in the template.",
+        default=None,
+    )
 
     def expand(self):
         self.save_path = os_expand(self.save_path)
+        if self.prompt_template_overwrite is not None:
+            self.prompt_template_overwrite = os_expand(self.prompt_template_overwrite)
 
 
 def load(path: str) -> Config:

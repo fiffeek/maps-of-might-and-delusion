@@ -1,5 +1,5 @@
 import pathlib
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
 
 from config import Config
 
@@ -10,6 +10,8 @@ class Templates:
         self.env = Environment(loader=FileSystemLoader(parent / "templates"))
         self.template = self.env.get_template("initial_prompt.j2")
         self.config = config
+        if self.config.prompt_template_overwrite is not None:
+            self.template = Template(self.config.prompt_template_overwrite)
 
     def get_initial_prompt(self):
         output = self.template.render(

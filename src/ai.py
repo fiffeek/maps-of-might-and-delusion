@@ -24,6 +24,7 @@ class AI:
 
     def start(self) -> MapTemplate:
         prompt = self.templates.get_initial_prompt()
+        logger.debug(f"Sending prompt: {prompt}")
         return self.__ask(prompt)
 
     def __ask(self, prompt: str) -> MapTemplate:
