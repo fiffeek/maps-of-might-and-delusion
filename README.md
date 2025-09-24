@@ -20,9 +20,69 @@ The generator combines AI creativity with game mechanics knowledge:
 
 ## Usage
 
-Generate a map using a configuration file:
+### Basic
 
-TODO add docker container and run
+Generate a map using a configuration file, in `./examples/configs/custom.yaml`
+```yaml
+llm_seed: 42
+players: 8
+humans: 8
+map_size: m
+freeform: |
+  - add underground
+save_path: /app/output
+```
+
+Then in command line:
+```bash
+docker pull ghcr.io/fiffeek/maps-of-might-and-delusion:latest
+docker run \
+  -v ./examples:/app/custom_examples \
+  -v ./output:/app/output \
+  -e ANTHROPIC_API_KEY='sk-...' \
+  ghcr.io/fiffeek/maps-of-might-and-delusion:latest --debug generate --config-path /app/custom_examples/configs/custom.yaml
+```
+
+
+The map and the `VCMI` mod-info will be available there.
+For one-off tests you can move it to `$HOME/.local/share/vcmi/Mods/` and enable the mod in `vcmilauncher`
+prior to using the templates.
+
+### Regular workflow
+I link the mod directory to this repo, since in `dist` are the vetted templates that should play well:
+```bash
+REPO_LOCATION="~/personal/vcmi-llm-map-generator/dist/momd"
+ln -s "$REPO_LOCATION" "$HOME/.local/share/vcmi/Mods/momd"
+```
+
+Then for generation, you can, in `./examples/configs/custom.yaml`
+```yaml
+llm_seed: 42
+players: 8
+humans: 8
+map_size: l
+template_name_override: "L88_Desert"
+freeform: |
+  - no underground
+  - spawn a treasure zone next to each player starting zone with 1 town, they cant be desert nor snow
+  - 3 other treasure zones with 1 town each, all desert, spawn more treasure here
+  - 1 bigger treasure zone with 3 towns, snow, big time treasure here
+  - give players more treasure in the starting area for faster gameplay
+  - connections should be guarded
+  - players 1-4 have zones close to one another (1 to 2, 2 to 3, 3 to 4), use fictive
+  - players 5-8 have zones close to one another (5 to 6, 6 to 7, 7 to 8), use fictive
+  - zones in (1-4) and (5-8) repel each other, put all 16 combinations
+save_path: /app/dist/momd
+```
+
+And run with:
+```bash
+docker run \
+  -v ./examples:/app/custom_examples \
+  -v ./dist:/app/dist \
+  -e ANTHROPIC_API_KEY='sk-...' \
+  ghcr.io/fiffeek/maps-of-might-and-delusion:latest --debug generate --config-path /app/custom_examples/configs/custom.yaml
+```
 
 ### Example Configurations
 
