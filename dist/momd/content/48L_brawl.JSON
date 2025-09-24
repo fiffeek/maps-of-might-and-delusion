@@ -1,7 +1,7 @@
 {
   "48L_brawl": {
-    "name": "Eight Kingdoms: The Great Convergence",
-    "description": "Eight mighty kingdoms find themselves drawn to a legendary central realm rich with ancient treasures and six powerful castle strongholds. Each ruler must first secure their nearby province before venturing into the ultimate prize - the Grand Citadel at the heart of the realm, guarded by formidable armies and containing artifacts of immense power.",
+    "name": "The Fortress Citadel",
+    "description": "Eight mighty warlords seek to claim the legendary Fortress Citadel at the heart of the realm. Each must first secure their own domain and expand through tributary lands before attempting the final assault on the central stronghold. The citadel contains six mighty fortresses and untold riches, but only one can rule them all. Form alliances with your neighbors or crush them underfoot - the choice is yours.",
     "minSize": "l",
     "maxSize": "l",
     "players": "8-8",
@@ -20,17 +20,23 @@
         "mines": {
           "wood": 1,
           "ore": 1,
-          "mercury": 1
+          "mercury": 1,
+          "sulfur": 1
         },
         "treasure": [
           {
             "min": 500,
             "max": 3000,
-            "density": 10
+            "density": 12
           },
           {
-            "min": 3000,
-            "max": 6000,
+            "min": 8000,
+            "max": 12000,
+            "density": 2
+          },
+          {
+            "min": 2000,
+            "max": 4000,
             "density": 8
           }
         ]
@@ -131,24 +137,30 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
         "mines": {
-          "sulfur": 1,
+          "gold": 1,
+          "crystal": 1,
           "gems": 1
         },
         "treasure": [
           {
-            "min": 5000,
-            "max": 12000,
-            "density": 2
-          },
-          {
             "min": 1000,
             "max": 4000,
+            "density": 10
+          },
+          {
+            "min": 5000,
+            "max": 8000,
             "density": 8
+          },
+          {
+            "min": 12000,
+            "max": 18000,
+            "density": 3
           }
         ],
         "customObjects": {
@@ -161,7 +173,7 @@
               "rmg": {
                 "zone_limit": 1,
                 "value": 1500,
-                "rarity": 150
+                "rarity": 200
               }
             }
           ]
@@ -172,7 +184,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -185,7 +197,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -198,7 +210,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -211,7 +223,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -224,7 +236,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -237,7 +249,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -250,7 +262,7 @@
         "size": 2,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
+        "monsters": "normal",
         "neutralTowns": {
           "towns": 1
         },
@@ -263,17 +275,17 @@
         "size": 8,
         "matchTerrainToTown": false,
         "townsAreSameType": true,
-        "monsters": "strong",
-        "terrainTypes": [
-          "grass"
+        "allowedTowns": [
+          "stronghold"
         ],
+        "monsters": "strong",
         "neutralTowns": {
           "castles": 6
         },
         "mines": {
           "gold": 3,
-          "wood": 1,
-          "ore": 1,
+          "wood": 2,
+          "ore": 3,
           "mercury": 2,
           "sulfur": 2,
           "crystal": 2,
@@ -281,24 +293,31 @@
         },
         "treasure": [
           {
-            "min": 25000,
-            "max": 30000,
-            "density": 5
+            "min": 2000,
+            "max": 6000,
+            "density": 15
           },
           {
-            "min": 15000,
-            "max": 22000,
+            "min": 8000,
+            "max": 15000,
+            "density": 12
+          },
+          {
+            "min": 18000,
+            "max": 25000,
             "density": 8
           },
           {
-            "min": 5000,
-            "max": 12000,
-            "density": 12
+            "min": 25000,
+            "max": 30000,
+            "density": 5
           }
         ],
         "customObjects": {
+          "banned_categories": [
+            "pandorasBox"
+          ],
           "bannedObjects": [
-            "core:object.pandoraBox",
             "core:objects.seerHut.2"
           ],
           "commonObjects": [
@@ -306,8 +325,8 @@
               "id": "core:objects.seerHut.2",
               "rmg": {
                 "zone_limit": 3,
-                "value": 8000,
-                "rarity": 150
+                "value": 2000,
+                "rarity": 200
               }
             }
           ]
@@ -507,8 +526,7 @@
       }
     ],
     "allowedWaterContent": [
-      "none",
-      "normal"
+      "none"
     ]
   }
 }
