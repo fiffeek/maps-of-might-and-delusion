@@ -19,8 +19,14 @@ class MapGenerator:
         map_template_json = map_template.model_dump_json(
             indent=2, exclude_none=True, by_alias=True
         )
+        self.maybe_override_template_name(map_template)
         logger.debug(map_template_json)
         self.save_template(map_template)
+
+    def maybe_override_template_name(self, map_template: MapTemplate):
+        if self.config.template_name_override is None:
+            return
+        map_template.id = self.config.template_name_override
 
     def save_template(self, map_template: MapTemplate):
         file = f"{self.config.save_path}/content/{map_template.id}.JSON"
