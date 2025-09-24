@@ -201,6 +201,33 @@ class CommonObjectRMGSpec(BaseModel):
     )
 
 
+class TownType(str, Enum):
+    CASTLE = "castle"
+    RAMPART = "rampart"
+    TOWER = "tower"
+    INFERNO = "inferno"
+    DUNGEON = "dungeon"
+    STRONGHOLD = "stronghold"
+    FORTRESS = "fortress"
+    NECROPOLIS = "necropolis"
+    CONFLUX = "conflux"
+    COVE = "cove"
+
+
+class MonsterType(str, Enum):
+    CASTLE = "castle"
+    RAMPART = "rampart"
+    TOWER = "tower"
+    INFERNO = "inferno"
+    DUNGEON = "dungeon"
+    STRONGHOLD = "stronghold"
+    FORTRESS = "fortress"
+    NECROPOLIS = "necropolis"
+    CONFLUX = "conflux"
+    COVE = "cove"
+    NEUTRAL = "neutral"
+
+
 class CommonObject(BaseModel):
     id: CommonObjectType = Field(description="The unique identifier of the object.")
     rmg: CommonObjectRMGSpec = Field(
@@ -255,6 +282,26 @@ class ZoneOptions(BaseModel):
         ...,
         description="If true, all towns generated in this zone will belong to the same faction",
         alias="townsAreSameType",
+    )
+    allowed_towns: Optional[List[TownType]] = Field(
+        default=None,
+        description="Towns allowed on this terrain. Empty allows all towns.",
+        alias="allowedTowns",
+    )
+    banned_towns: Optional[List[TownType]] = Field(
+        default=None,
+        description="Towns will never spawn on this terrain. Empty allows all towns.",
+        alias="bannedTowns",
+    )
+    allowed_monsters: Optional[List[MonsterType]] = Field(
+        default=None,
+        alias="allowedMonsters",
+        description="Factions of monsters allowed on this zone. Empty list allows all.",
+    )
+    banned_monsters: Optional[List[MonsterType]] = Field(
+        default=None,
+        alias="bannedMonsters",
+        description="Factions of monsters banned in this zone. Empty list allows all.",
     )
     monsters: MonsterStrength = Field(
         ..., description="Describes the guarding of the treasures inside the zone."
