@@ -1,23 +1,23 @@
-# Maps of Might and Delusion
+# Maps of Might and Delusion III
 
 An AI-powered map generator for Heroes of Might and Magic III (VCMI) that uses Large Language Models to create unique, thematic template maps with intelligent object placement and terrain generation.
 
 ## Screenshots
 
-There were taken in VCMI map generator, `./examples/configs/48L_brawl.yaml` (or static `./dist/momd/content/48L_brawl.JSON` with seed `42`):
+These were taken in VCMI map generator, using `./examples/configs/48L_brawl.yaml` (or static `./dist/momd/content/48L_brawl.JSON` with seed `42`):
 
 <img width="500" height="499" alt="ss_2025-09-24_20-35-16" src="https://github.com/user-attachments/assets/804a9bd0-a4ad-4daf-bcae-029716d56582" />
 
 
 
-**Disclaimer**: These are assets from the original game, I nor VCMI owns them.
+**Disclaimer**: These are assets from the original game, neither I nor VCMI own them.
 
 ## Features
 
-- AI-Driven Generation: Uses LLMs (OpenAI, Anthropic Claude) to generate creative and balanced VCMI maps
-- Template System: Jinja2-based templates for flexible map generation logic
-- Thematic Maps: Generate maps based on themes like Game of Thrones, mazes, or custom configurations
-- Configurable: YAML-based configuration system for customizing generation parameters
+- **AI-Driven Generation**: Uses LLMs (OpenAI, Anthropic Claude) to generate creative and balanced VCMI maps
+- **Template System**: Jinja2-based templates for flexible map generation logic
+- **Thematic Maps**: Generate maps based on themes like Game of Thrones, mazes, or custom configurations
+- **Configurable**: YAML-based configuration system for customizing generation parameters
 
 ## How It Works
 
@@ -30,9 +30,9 @@ The generator combines AI creativity with game mechanics knowledge:
 
 ## Usage
 
-### Basic
+### Quick Start
 
-Generate a map using a configuration file, in `./examples/configs/custom.yaml`
+Generate a map using a configuration file. Create `./examples/configs/custom.yaml`:
 ```yaml
 llm_seed: 42
 players: 8
@@ -54,18 +54,17 @@ docker run \
 ```
 
 
-The map and the `VCMI` mod-info will be available there.
-For one-off tests you can move it to `$HOME/.local/share/vcmi/Mods/` and enable the mod in `vcmilauncher`
-prior to using the templates.
+The map and the VCMI mod-info will be available in the output directory.
+For one-off tests, move it to `$HOME/.local/share/vcmi/Mods/` and enable the mod in `vcmilauncher` before using the templates.
 
-### Regular workflow
-I link the mod directory to this repo, since in `dist` are the vetted templates that should play well:
+### Regular Workflow
+Link the mod directory to this repo, since `dist` contains vetted templates that should play well:
 ```bash
 REPO_LOCATION="~/personal/vcmi-llm-map-generator/dist/momd"
 ln -s "$REPO_LOCATION" "$HOME/.local/share/vcmi/Mods/momd"
 ```
 
-Then for generation, you can, in `./examples/configs/custom.yaml`
+Then for generation, create `./examples/configs/custom.yaml`:
 ```yaml
 llm_seed: 42
 players: 8
@@ -102,14 +101,56 @@ docker run \
 
 ## Configuration
 
-Maps are configured using YAML files that define:
+Maps are configured using YAML files with the following options:
 
-- Map size and terrain preferences
-- AI model settings and prompts
-- Object placement rules and restrictions
-- Thematic elements and constraints
+### Basic Configuration Options
 
-See `examples/configs/` for sample configurations.
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `llm_seed` | number | Random seed for consistent map generation (using disk cache) | `42` |
+| `players` | number | Total number of player slots (1-8) | `8` |
+| `humans` | number | Number of human players | `4` |
+| `map_size` | string | Map size: `s` (small), `m` (medium), `l` (large), `xl` (extra large), ... | `l` |
+| `save_path` | string | Directory to save generated maps | `/app/output` |
+| `template_name_override` | string | Override the generated template name | `L84S` |
+| `freeform` | string | Custom instructions for map generation (see below) | See examples |
+| `prompt_template_overwrite` | string | Custom prompt template for the AI | Custom Jinja2 template |
+
+### Freeform Instructions
+
+The `freeform` field allows you to provide custom instructions to the AI for map generation. Common options include:
+
+**Underground Control:**
+- `no underground` - Disable underground level
+- `add underground` - Enable underground level
+- `underground serves as shortcuts` - Underground connects distant areas
+
+**Zone Configuration:**
+- `add N zones` - Create additional zones (e.g., `add 20 zones`)
+- `place a choke point in the middle` - Create central contested area
+- `treasure zone next to each player` - Personal expansion zones
+- `N main treasure zone hubs with 1 town each` - Major contested areas
+
+**Player Layout:**
+- `place players in maximum distance between one another` - Spread players apart
+- `players 1-4 have zones close to one another` - Create team clusters
+- Use `fictive` connections for close player positioning
+- Use `repel` for distant positioning (e.g., `put all 16 combinations`)
+
+**Resource and Object Control:**
+- `give players more treasure in starting zones` - Boost early game
+- `give players more mines in starting zones` - Resource advantage
+- `ban creature banks in starting zones` - Prevent early power spikes
+- `ban pandora box` - Remove random artifacts
+- `no teleporters on surface` - Limit mobility options
+- `use as many custom objects as viable` - Enable mod objects
+
+**Connection Types:**
+- `do not use junction connections, prefer treasure or wide` - Control zone connections
+- `the ONLY allowed connection type is forcePortal` - Portal-only connections
+- `connections should be guarded` - Add guardians to passages
+
+See `examples/configs/` for complete configuration examples.
 
 ## Stats
 
@@ -118,12 +159,16 @@ For large map without an underground:
 - 8k output tokens
 
 
-## Development Requirements
+## Development
+
+### Requirements
 
 - asdf (for version management)
-- `make`
+- make
+
+### Setup
 
 ```bash
-# installs uv, pulls are dependencies and sets up git hooks
+# Install uv, pull dependencies, and set up git hooks
 make dev
 ```
