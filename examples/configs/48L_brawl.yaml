@@ -1,0 +1,19 @@
+---
+llm_seed: 42
+players: 8
+humans: 8
+map_size: l
+template_name_override: 48L_brawl
+freeform: |
+    - no underground
+    - every connection is wide, no other connection type is allowed
+    - other than the 8 players there is 8 smaller treasure zones with 1 town each connected to each player
+    - centally there is by far the BIGGEST treasure zone, with the richest treasure and 6 towns, all these are castle type
+    - no pandorasBox
+    - spawn 3 seerHut in the central zone
+    - add a magic well in each player second town zone
+    - no teleport connections
+    - players 1-4 have zones close to one another (1 to 2, 2 to 3, 3 to 4), use fictive
+    - players 5-8 have zones close to one another (5 to 6, 6 to 7, 7 to 8), use fictive
+    - zones in (1-4) and (5-8) repel each other, put all 16 combinations
+save_path: /app/dist/momd

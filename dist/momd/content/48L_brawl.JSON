@@ -1,0 +1,514 @@
+{
+  "48L_brawl": {
+    "name": "Eight Kingdoms: The Great Convergence",
+    "description": "Eight mighty kingdoms find themselves drawn to a legendary central realm rich with ancient treasures and six powerful castle strongholds. Each ruler must first secure their nearby province before venturing into the ultimate prize - the Grand Citadel at the heart of the realm, guarded by formidable armies and containing artifacts of immense power.",
+    "minSize": "l",
+    "maxSize": "l",
+    "players": "8-8",
+    "humans": "8-8",
+    "zones": {
+      "1": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 1,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "wood": 1,
+          "ore": 1,
+          "mercury": 1
+        },
+        "treasure": [
+          {
+            "min": 500,
+            "max": 3000,
+            "density": 10
+          },
+          {
+            "min": 3000,
+            "max": 6000,
+            "density": 8
+          }
+        ]
+      },
+      "2": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 2,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "3": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 3,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "4": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 4,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "5": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 5,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "6": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 6,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "7": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 7,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "8": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 8,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "9": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "mines": {
+          "sulfur": 1,
+          "gems": 1
+        },
+        "treasure": [
+          {
+            "min": 5000,
+            "max": 12000,
+            "density": 2
+          },
+          {
+            "min": 1000,
+            "max": 4000,
+            "density": 8
+          }
+        ],
+        "customObjects": {
+          "bannedObjects": [
+            "core:object.magicWell.magicWell"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.magicWell.magicWell",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 1500,
+                "rarity": 150
+              }
+            }
+          ]
+        }
+      },
+      "10": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "11": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "12": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "13": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "14": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "15": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "16": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "neutralTowns": {
+          "towns": 1
+        },
+        "minesLikeZone": 9,
+        "treasureLikeZone": 9,
+        "customObjectsLikeZone": 9
+      },
+      "17": {
+        "type": "treasure",
+        "size": 8,
+        "matchTerrainToTown": false,
+        "townsAreSameType": true,
+        "monsters": "strong",
+        "terrainTypes": [
+          "grass"
+        ],
+        "neutralTowns": {
+          "castles": 6
+        },
+        "mines": {
+          "gold": 3,
+          "wood": 1,
+          "ore": 1,
+          "mercury": 2,
+          "sulfur": 2,
+          "crystal": 2,
+          "gems": 2
+        },
+        "treasure": [
+          {
+            "min": 25000,
+            "max": 30000,
+            "density": 5
+          },
+          {
+            "min": 15000,
+            "max": 22000,
+            "density": 8
+          },
+          {
+            "min": 5000,
+            "max": 12000,
+            "density": 12
+          }
+        ],
+        "customObjects": {
+          "bannedObjects": [
+            "core:object.pandoraBox",
+            "core:objects.seerHut.2"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:objects.seerHut.2",
+              "rmg": {
+                "zone_limit": 3,
+                "value": 8000,
+                "rarity": 150
+              }
+            }
+          ]
+        }
+      }
+    },
+    "connections": [
+      {
+        "a": "1",
+        "b": "9",
+        "type": "wide"
+      },
+      {
+        "a": "2",
+        "b": "10",
+        "type": "wide"
+      },
+      {
+        "a": "3",
+        "b": "11",
+        "type": "wide"
+      },
+      {
+        "a": "4",
+        "b": "12",
+        "type": "wide"
+      },
+      {
+        "a": "5",
+        "b": "13",
+        "type": "wide"
+      },
+      {
+        "a": "6",
+        "b": "14",
+        "type": "wide"
+      },
+      {
+        "a": "7",
+        "b": "15",
+        "type": "wide"
+      },
+      {
+        "a": "8",
+        "b": "16",
+        "type": "wide"
+      },
+      {
+        "a": "9",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "10",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "11",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "12",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "13",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "14",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "15",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "16",
+        "b": "17",
+        "type": "wide"
+      },
+      {
+        "a": "1",
+        "b": "2",
+        "type": "fictive"
+      },
+      {
+        "a": "2",
+        "b": "3",
+        "type": "fictive"
+      },
+      {
+        "a": "3",
+        "b": "4",
+        "type": "fictive"
+      },
+      {
+        "a": "5",
+        "b": "6",
+        "type": "fictive"
+      },
+      {
+        "a": "6",
+        "b": "7",
+        "type": "fictive"
+      },
+      {
+        "a": "7",
+        "b": "8",
+        "type": "fictive"
+      },
+      {
+        "a": "1",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "8",
+        "type": "repulsive"
+      }
+    ],
+    "allowedWaterContent": [
+      "none",
+      "normal"
+    ]
+  }
+}
