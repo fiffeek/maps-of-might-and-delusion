@@ -1,0 +1,23 @@
+{
+  "author": "momd",
+  "changelog": {},
+  "compatibility": {
+    "min": "1.5.6"
+  },
+  "contact": "filipmikina@gmail.com",
+  "depends": [],
+  "description": "Template pack for LLM generated templates",
+  "keepDisabled": false,
+  "modType": "Templates",
+  "name": "MoMD template pack",
+  "templates": [
+    "underground_empires_44.JSON",
+    "L84S.JSON",
+    "epic_conquest_8p.JSON",
+    "central_conflict_medium.JSON",
+    "underground_conquest_8p.JSON",
+    "convergence_of_powers.JSON",
+    "harsh_winter_46.JSON"
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,16 @@
+---
+llm_seed: 46
+players: 8
+humans: 8
+map_size: l
+freeform: |
+    - theme is "harsh winter"
+    - underground has zones that have lots of mines, no towns
+    - every zone is on snow on the surface
+    - the central zone is by far the biggest
+    - first 4 player zones should be close to one another (allies) but repel the last 4 player zones
+    - last 4 player zones should be close to one another
+    - all neutral towns are fortresses
+    - ensure that magic wells as well as magic shrines spawn
+    - ban pandora box everywhere but the main zone
+    - the promised land is a convoluted treasure land with lots of treasure and 4 towns

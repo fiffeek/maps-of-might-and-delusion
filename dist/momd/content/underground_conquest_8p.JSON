@@ -1,0 +1,456 @@
+{
+  "underground_conquest_8p": {
+    "name": "The Underground Conquest",
+    "description": "Eight mighty kingdoms compete for dominance in a realm where the surface hides vast underground treasures. Players must expand their territories both above and below ground, establishing mining operations and securing strategic passages. The ultimate goal is to control the Great Underground Sanctum - a legendary vault containing unimaginable riches. Victory comes to those who can balance surface expansion with underground exploration while defending their realm from seven other ambitious rulers.",
+    "minSize": "m+u",
+    "maxSize": "m+u",
+    "players": "8",
+    "humans": "8",
+    "zones": {
+      "1": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 1,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "wood": 1,
+          "ore": 1,
+          "crystal": 1
+        },
+        "treasure": [
+          {
+            "min": 500,
+            "max": 3000,
+            "density": 10
+          },
+          {
+            "min": 3000,
+            "max": 6000,
+            "density": 8
+          },
+          {
+            "min": 12000,
+            "max": 16000,
+            "density": 1
+          }
+        ]
+      },
+      "2": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 2,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "3": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 3,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "4": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 4,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "5": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 5,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "6": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 6,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "7": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 7,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "8": {
+        "type": "playerStart",
+        "size": 3,
+        "owner": 8,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1
+      },
+      "9": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "mines": {
+          "sulfur": 1,
+          "gems": 1
+        },
+        "treasure": [
+          {
+            "min": 300,
+            "max": 2000,
+            "density": 12
+          },
+          {
+            "min": 3000,
+            "max": 6000,
+            "density": 8
+          },
+          {
+            "min": 5000,
+            "max": 12500,
+            "density": 2
+          }
+        ]
+      },
+      "10": {
+        "type": "treasure",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "mines": {
+          "gold": 1,
+          "mercury": 1
+        },
+        "treasureLikeZone": 9
+      },
+      "11": {
+        "type": "junction",
+        "size": 1,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "weak",
+        "treasure": [
+          {
+            "min": 500,
+            "max": 1500,
+            "density": 8
+          }
+        ]
+      },
+      "12": {
+        "type": "junction",
+        "size": 1,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "weak",
+        "treasureLikeZone": 11
+      },
+      "13": {
+        "type": "treasure",
+        "size": 4,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "strong",
+        "terrainTypes": [
+          "subterra"
+        ],
+        "neutralTowns": {
+          "towns": 1
+        },
+        "mines": {
+          "mercury": 1,
+          "sulfur": 1,
+          "crystal": 2,
+          "gems": 1
+        },
+        "treasure": [
+          {
+            "min": 10000,
+            "max": 15000,
+            "density": 6
+          },
+          {
+            "min": 5000,
+            "max": 9000,
+            "density": 7
+          },
+          {
+            "min": 15000,
+            "max": 25000,
+            "density": 3
+          }
+        ],
+        "customObjects": {
+          "bannedObjects": [
+            "core:object.pandoraBox"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.pandoraBox",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 15000,
+                "rarity": 50
+              }
+            }
+          ]
+        }
+      },
+      "14": {
+        "type": "treasure",
+        "size": 3,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "strong",
+        "terrainTypes": [
+          "subterra"
+        ],
+        "mines": {
+          "gold": 2,
+          "wood": 1,
+          "ore": 1
+        },
+        "treasure": [
+          {
+            "min": 8000,
+            "max": 12000,
+            "density": 5
+          },
+          {
+            "min": 3000,
+            "max": 6000,
+            "density": 9
+          },
+          {
+            "min": 1000,
+            "max": 2500,
+            "density": 7
+          }
+        ]
+      },
+      "15": {
+        "type": "treasure",
+        "size": 5,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "strong",
+        "terrainTypes": [
+          "subterra"
+        ],
+        "neutralTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "gold": 1,
+          "mercury": 2,
+          "sulfur": 2,
+          "crystal": 1,
+          "gems": 2
+        },
+        "treasure": [
+          {
+            "min": 25000,
+            "max": 30000,
+            "density": 5
+          },
+          {
+            "min": 15000,
+            "max": 22000,
+            "density": 3
+          },
+          {
+            "min": 5000,
+            "max": 10000,
+            "density": 8
+          }
+        ],
+        "customObjects": {
+          "bannedObjects": [
+            "core:object.pandoraBox"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.pandoraBox",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 20000,
+                "rarity": 30
+              }
+            },
+            {
+              "id": "core:object.randomArtifactMajor",
+              "rmg": {
+                "value": 12000,
+                "rarity": 80
+              }
+            }
+          ]
+        }
+      }
+    },
+    "connections": [
+      {
+        "a": "1",
+        "b": "9",
+        "type": "wide"
+      },
+      {
+        "a": "2",
+        "b": "9",
+        "type": "wide"
+      },
+      {
+        "a": "3",
+        "b": "10",
+        "type": "wide"
+      },
+      {
+        "a": "4",
+        "b": "10",
+        "type": "wide"
+      },
+      {
+        "a": "5",
+        "b": "11",
+        "guard": 5000
+      },
+      {
+        "a": "6",
+        "b": "11",
+        "guard": 5000
+      },
+      {
+        "a": "7",
+        "b": "12",
+        "guard": 5000
+      },
+      {
+        "a": "8",
+        "b": "12",
+        "guard": 5000
+      },
+      {
+        "a": "9",
+        "b": "11",
+        "guard": 8000
+      },
+      {
+        "a": "10",
+        "b": "12",
+        "guard": 8000
+      },
+      {
+        "a": "11",
+        "b": "13",
+        "guard": 12000
+      },
+      {
+        "a": "12",
+        "b": "14",
+        "guard": 12000
+      },
+      {
+        "a": "13",
+        "b": "15",
+        "guard": 20000
+      },
+      {
+        "a": "14",
+        "b": "15",
+        "guard": 20000
+      },
+      {
+        "a": "1",
+        "b": "3",
+        "type": "fictive"
+      },
+      {
+        "a": "2",
+        "b": "4",
+        "type": "fictive"
+      },
+      {
+        "a": "5",
+        "b": "7",
+        "type": "fictive"
+      },
+      {
+        "a": "6",
+        "b": "8",
+        "type": "fictive"
+      },
+      {
+        "a": "1",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "8",
+        "type": "repulsive"
+      }
+    ],
+    "allowedWaterContent": [
+      "none",
+      "normal"
+    ]
+  }
+}

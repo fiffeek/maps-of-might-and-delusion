@@ -1,0 +1,16 @@
+---
+llm_seed: 42
+players: 8
+humans: 4
+map_size: l
+save_path: $HOME/personal/vcmi-llm-map-generator/dist/momd/
+template_name_override: L84S
+freeform: |
+    - no underground
+    - use as many custom object as viable to ensure fun gameplay
+    - to not spam a specific object type multiple times limit it in zone to 1-3 (or some sane amount)
+    - next to each player zone there is a treasure zone with one town in it allowing for slower progression, no other player has direct access to that zone
+    - there is three main treasure zone hubs with 1 town each, very rich in treasure
+    - players 1-4 have zones close to one another (1 to 2, 2 to 3, 3 to 4), use fictive
+    - players 5-8 have zones close to one another (5 to 6, 6 to 7, 7 to 8), use fictive
+    - zones in (1-4) and (5-8) repel each other, put all 16 combinations

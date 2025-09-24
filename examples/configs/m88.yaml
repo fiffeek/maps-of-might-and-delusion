@@ -1,0 +1,7 @@
+---
+llm_seed: 42
+players: 8
+humans: 8
+map_size: m
+freeform: |
+    - add underground

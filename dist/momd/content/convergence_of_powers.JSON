@@ -1,0 +1,606 @@
+{
+  "convergence_of_powers": {
+    "name": "Convergence of Powers",
+    "description": "Eight mighty heroes find themselves in a realm divided into two factions. The first four heroes (1-4) have established their domains in the eastern lands, while the other four (5-8) rule the western territories. Ancient magical forces keep these regions apart, but at the center lies the Nexus of Eternity - a massive treasure zone filled with unimaginable riches and artifacts. The heroes must gather their strength, expand their empires, and eventually clash for control of this ultimate prize. Victory goes to the one who can claim dominion over the Nexus and prove their supremacy over all rivals.",
+    "minSize": "m",
+    "maxSize": "l",
+    "players": "8-8",
+    "humans": "4-4",
+    "zones": {
+      "1": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 1,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "wood": 1,
+          "ore": 1,
+          "mercury": 1,
+          "sulfur": 1
+        },
+        "treasure": [
+          {
+            "min": 500,
+            "max": 2500,
+            "density": 8
+          },
+          {
+            "min": 4000,
+            "max": 7000,
+            "density": 4
+          },
+          {
+            "min": 12000,
+            "max": 18000,
+            "density": 1
+          }
+        ],
+        "customObjects": {
+          "banned_categories": [
+            "pandorasBox"
+          ],
+          "bannedObjects": [
+            "core:object.magicWell.magicWell",
+            "core:object.learningStone",
+            "core:object.randomArtifactMinor",
+            "core:object.shrineOfMagicLevel1"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.magicWell.magicWell",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 1500,
+                "rarity": 150
+              }
+            },
+            {
+              "id": "core:object.learningStone",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 2000,
+                "rarity": 120
+              }
+            },
+            {
+              "id": "core:object.randomArtifactMinor",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 8000,
+                "rarity": 80
+              }
+            },
+            {
+              "id": "core:object.shrineOfMagicLevel1",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 1200,
+                "rarity": 100
+              }
+            }
+          ]
+        }
+      },
+      "2": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 2,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 1,
+        "treasureLikeZone": 1,
+        "customObjectsLikeZone": 1
+      },
+      "3": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 3,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "wood": 1,
+          "ore": 1,
+          "crystal": 1,
+          "gems": 1
+        },
+        "treasureLikeZone": 1,
+        "customObjectsLikeZone": 1
+      },
+      "4": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 4,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 3,
+        "treasureLikeZone": 1,
+        "customObjectsLikeZone": 1
+      },
+      "5": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 5,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "gold": 1,
+          "wood": 1,
+          "ore": 1,
+          "sulfur": 1
+        },
+        "treasure": [
+          {
+            "min": 400,
+            "max": 2000,
+            "density": 9
+          },
+          {
+            "min": 3500,
+            "max": 6500,
+            "density": 5
+          },
+          {
+            "min": 10000,
+            "max": 15000,
+            "density": 1
+          }
+        ],
+        "customObjects": {
+          "banned_categories": [
+            "pandorasBox"
+          ],
+          "bannedObjects": [
+            "core:object.arena",
+            "core:object.schoolOfWar",
+            "core:object.randomArtifactMinor",
+            "core:object.witchHut.witchHut"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.arena",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 1800,
+                "rarity": 140
+              }
+            },
+            {
+              "id": "core:object.schoolOfWar",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 2200,
+                "rarity": 110
+              }
+            },
+            {
+              "id": "core:object.randomArtifactMinor",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 8000,
+                "rarity": 80
+              }
+            },
+            {
+              "id": "core:object.witchHut.witchHut",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 1500,
+                "rarity": 130
+              }
+            }
+          ]
+        }
+      },
+      "6": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 6,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 5,
+        "treasureLikeZone": 5,
+        "customObjectsLikeZone": 5
+      },
+      "7": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 7,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "mines": {
+          "wood": 1,
+          "ore": 1,
+          "mercury": 1,
+          "gems": 1
+        },
+        "treasureLikeZone": 5,
+        "customObjectsLikeZone": 5
+      },
+      "8": {
+        "type": "playerStart",
+        "size": 4,
+        "owner": 8,
+        "matchTerrainToTown": true,
+        "townsAreSameType": true,
+        "monsters": "normal",
+        "playerTowns": {
+          "castles": 1
+        },
+        "minesLikeZone": 7,
+        "treasureLikeZone": 5,
+        "customObjectsLikeZone": 5
+      },
+      "9": {
+        "type": "treasure",
+        "size": 12,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "strong",
+        "neutralTowns": {
+          "castles": 2,
+          "towns": 1
+        },
+        "mines": {
+          "gold": 2,
+          "wood": 2,
+          "ore": 2,
+          "mercury": 2,
+          "sulfur": 2,
+          "crystal": 2,
+          "gems": 2
+        },
+        "treasure": [
+          {
+            "min": 1000,
+            "max": 4000,
+            "density": 15
+          },
+          {
+            "min": 8000,
+            "max": 15000,
+            "density": 12
+          },
+          {
+            "min": 20000,
+            "max": 30000,
+            "density": 8
+          },
+          {
+            "min": 25000,
+            "max": 30000,
+            "density": 3
+          }
+        ],
+        "customObjects": {
+          "bannedObjects": [
+            "core:object.university",
+            "core:object.blackMarket",
+            "core:object.tradingPost",
+            "core:object.randomArtifactMajor",
+            "core:object.randomArtifactTreasure",
+            "core:object.shrineOfMagicLevel2",
+            "core:object.shrineOfMagicLevel3",
+            "core:object.pandoraBox",
+            "core:object.randomDwelling",
+            "core:objects.hillFort",
+            "core:objects.sanctuary"
+          ],
+          "commonObjects": [
+            {
+              "id": "core:object.university",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 3500,
+                "rarity": 180
+              }
+            },
+            {
+              "id": "core:object.blackMarket",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 2800,
+                "rarity": 150
+              }
+            },
+            {
+              "id": "core:object.tradingPost",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 2200,
+                "rarity": 140
+              }
+            },
+            {
+              "id": "core:object.randomArtifactMajor",
+              "rmg": {
+                "zone_limit": 3,
+                "value": 15000,
+                "rarity": 70
+              }
+            },
+            {
+              "id": "core:object.randomArtifactTreasure",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 25000,
+                "rarity": 50
+              }
+            },
+            {
+              "id": "core:object.shrineOfMagicLevel2",
+              "rmg": {
+                "zone_limit": 2,
+                "value": 4000,
+                "rarity": 120
+              }
+            },
+            {
+              "id": "core:object.shrineOfMagicLevel3",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 8000,
+                "rarity": 80
+              }
+            },
+            {
+              "id": "core:object.pandoraBox",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 20000,
+                "rarity": 60
+              }
+            },
+            {
+              "id": "core:object.randomDwelling",
+              "rmg": {
+                "zone_limit": 3,
+                "value": 12000,
+                "rarity": 90
+              }
+            },
+            {
+              "id": "core:objects.hillFort",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 5000,
+                "rarity": 110
+              }
+            },
+            {
+              "id": "core:objects.sanctuary",
+              "rmg": {
+                "zone_limit": 1,
+                "value": 3000,
+                "rarity": 130
+              }
+            }
+          ]
+        }
+      },
+      "10": {
+        "type": "junction",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "treasure": [
+          {
+            "min": 800,
+            "max": 2500,
+            "density": 6
+          },
+          {
+            "min": 3000,
+            "max": 5000,
+            "density": 3
+          }
+        ]
+      },
+      "11": {
+        "type": "junction",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "treasureLikeZone": 10
+      },
+      "12": {
+        "type": "junction",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "treasureLikeZone": 10
+      },
+      "13": {
+        "type": "junction",
+        "size": 2,
+        "matchTerrainToTown": false,
+        "townsAreSameType": false,
+        "monsters": "normal",
+        "treasureLikeZone": 10
+      }
+    },
+    "connections": [
+      {
+        "a": "1",
+        "b": "2",
+        "type": "wide"
+      },
+      {
+        "a": "2",
+        "b": "3",
+        "type": "wide"
+      },
+      {
+        "a": "3",
+        "b": "4",
+        "type": "wide"
+      },
+      {
+        "a": "5",
+        "b": "6",
+        "type": "wide"
+      },
+      {
+        "a": "6",
+        "b": "7",
+        "type": "wide"
+      },
+      {
+        "a": "7",
+        "b": "8",
+        "type": "wide"
+      },
+      {
+        "a": "1",
+        "b": "10",
+        "guard": 5000
+      },
+      {
+        "a": "4",
+        "b": "11",
+        "guard": 5000
+      },
+      {
+        "a": "5",
+        "b": "12",
+        "guard": 5000
+      },
+      {
+        "a": "8",
+        "b": "13",
+        "guard": 5000
+      },
+      {
+        "a": "10",
+        "b": "9",
+        "guard": 8000
+      },
+      {
+        "a": "11",
+        "b": "9",
+        "guard": 8000
+      },
+      {
+        "a": "12",
+        "b": "9",
+        "guard": 8000
+      },
+      {
+        "a": "13",
+        "b": "9",
+        "guard": 8000
+      },
+      {
+        "a": "1",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "1",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "7",
+        "type": "repulsive"
+      },
+      {
+        "a": "2",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "3",
+        "b": "8",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "5",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "6",
+        "type": "repulsive"
+      },
+      {
+        "a": "4",
+        "b": "7",
+        "type": "repulsive"
+      }
+    ]
+  }
+}
