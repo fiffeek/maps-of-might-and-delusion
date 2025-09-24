@@ -6,7 +6,9 @@ An AI-powered map generator for Heroes of Might and Magic III (VCMI) that uses L
 
 There were taken in VCMI map generator, `./examples/configs/48L_brawl.yaml` (or static `./dist/momd/content/48L_brawl.JSON` with seed `42`):
 
-<img width="1916" height="1912" alt="ss_2025-09-24_20:35:16" src="https://github.com/user-attachments/assets/4fac03dd-866b-4c60-b6c2-5968f173abf6" />
+<img width="500" height="499" alt="ss_2025-09-24_20-35-16" src="https://github.com/user-attachments/assets/804a9bd0-a4ad-4daf-bcae-029716d56582" />
+
+
 
 **Disclaimer**: These are assets from the original game, I nor VCMI owns them.
 
