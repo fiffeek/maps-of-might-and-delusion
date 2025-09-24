@@ -41,6 +41,12 @@ Maps are configured using YAML files that define:
 
 See `examples/configs/` for sample configurations.
 
+## Stats
+
+For large map without an underground:
+- 20k input tokens
+- 8k output tokens
+
 
 ## Development Requirements
 
